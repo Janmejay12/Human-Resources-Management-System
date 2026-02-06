@@ -1,14 +1,12 @@
 package com.example.HRMS.entities;
 
 import com.example.HRMS.enums.OwnerType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -22,13 +20,27 @@ public class TravelDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long travelDocumentId;
 
-    private Long travelId;
-    private Long employeeId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "travel_id", nullable = false)
+    private Travel travel;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee uploadedBy;
+
+    @Column(name = "file_name", nullable = false)
     private String fileName;
-    private String fileType;
+
+    @Column(name = "file_type")
+    private String fileType; // ***
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "owner_type", nullable = false)
     private OwnerType ownerType; // yet to decide the mapping
-    private String uploadedBy;
-    private LocalDateTime uploadDate;
+
+    @CreationTimestamp
+    private LocalDateTime uploadTime;
+
+    @Column(name = "storage_url", nullable = false, length = 512)
     private String storageUrl;
 }

@@ -1,14 +1,12 @@
 package com.example.HRMS.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,14 +19,23 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gameId;
+
+    @Column(name = "game_name", nullable = false)
     private String gameName;
 
-    private List<BookSlot> bookSlots;
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<BookSlot> bookSlots = new ArrayList<>();
 
+    @Column(name = "min_players", nullable = false)
     private int minPlayers;
-    private int maxPlayers;
-    private int slotMinutes;
-    private double operatingHours;
 
+    @Column(name = "max_players", nullable = false)
+    private int maxPlayers;
+
+    @Column(name = "slot_minutes", nullable = false)
+    private int slotMinutes;
+
+    @Column(name = "operating_hours", nullable = false)
+    private double operatingHours;
 
 }

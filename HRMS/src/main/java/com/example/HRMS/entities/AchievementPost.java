@@ -1,15 +1,14 @@
 package com.example.HRMS.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,20 +16,29 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "achievement_posts")
 public class AchievementPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long achievementPostId;
 
+    @ManyToOne
+    @JoinColumn(name = "employee_profile_id")
     private EmployeeProfile employeeProfile;
 
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "achievement_posts", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     private int likesCount;
+
+    @Column(name = "post-title",nullable = false)
     private String title;
+
     private String description;
 
-    private List<EmployeeProfile> tags;
+    @OneToMany(mappedBy = "achievement_posts",cascade = CascadeType.ALL)
+    private List<EmployeeProfile> tags = new ArrayList<>();
 
+    @CreationTimestamp
     private LocalDateTime createAt;
 }

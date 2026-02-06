@@ -1,15 +1,13 @@
 package com.example.HRMS.entities;
 
 import com.example.HRMS.enums.Statuses;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,9 +19,16 @@ public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long statusId;
+
+    @Column(name = "status_name", nullable = false)
     private Statuses statusName;
 
-    private List<Travel> travels;
-    private List<BookSlot> bookSlots;
-    private List<Job> jobs;
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
+    private List<Travel> travels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
+    private List<BookSlot> bookSlots= new ArrayList<>();
+
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
+    private List<Job> jobs= new ArrayList<>();
 }

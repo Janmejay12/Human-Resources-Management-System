@@ -1,13 +1,11 @@
 package com.example.HRMS.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,9 +19,19 @@ public class ExpenseDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long expenseDocumentId;
 
+    @Column(name = "file_name", nullable = false)
     private String fileName;
+
+    @Column(name = "file_type")
     private String fileType;
+
+    @ManyToOne()
+    @JoinColumn(name = "expense_id", nullable = false)
     private Expense expense;
+
+    @CreationTimestamp
     private LocalDateTime uploadDate;
+
+    @Column(name = "storage_url", nullable = false, length = 512)
     private String storageUrl;
 }
