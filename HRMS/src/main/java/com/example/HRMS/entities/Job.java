@@ -24,6 +24,9 @@ public class Job {
     @Column(name = "job_description", nullable = false)
     private String jobDescription;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -41,7 +44,6 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private EmployementType employmentType; //
 
-    @Temporal(TemporalType.DATE)
     private LocalDateTime postedDate;
 
     @ManyToOne

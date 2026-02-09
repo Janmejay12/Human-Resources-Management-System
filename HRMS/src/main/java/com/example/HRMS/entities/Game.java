@@ -32,6 +32,9 @@ public class Game {
     @Column(name = "max_players", nullable = false)
     private int maxPlayers;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @Column(name = "slot_minutes", nullable = false)
     private int slotMinutes;
 

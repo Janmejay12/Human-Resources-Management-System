@@ -30,6 +30,9 @@ public class Status {
     @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
     private List<BookSlot> bookSlots= new ArrayList<>();
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
     private List<Job> jobs= new ArrayList<>();
 }

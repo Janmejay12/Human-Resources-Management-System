@@ -29,6 +29,9 @@ public class ExpenseDocument {
     @JoinColumn(name = "expense_id", nullable = false)
     private Expense expense;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @CreationTimestamp
     private LocalDateTime uploadDate;
 

@@ -34,17 +34,21 @@ public class Expense {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
+    @Column(name = "currency",nullable = false)
+    private String currency;
 
     private String description;
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Temporal(TemporalType.DATE)
     private LocalDateTime expenseDate;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ExpenseCategory expenseCategory;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
 
     @Column(name = "expense_status",nullable = false)

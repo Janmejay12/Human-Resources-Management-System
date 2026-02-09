@@ -33,11 +33,12 @@ public class BookSlot {
     private Game game;
 
     @ManyToMany(mappedBy = "bookSlots")
-    private List<EmployeeProfile> players = new ArrayList<>();
+    private List<Employee> players = new ArrayList<>();
 
-    @ManyToOne()
-    @JoinColumn(name = "booked_by_id", nullable = false)
-    private Employee bookedBy;
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
+    private String bookedBy;
 
     @ManyToOne()
     @JoinColumn(name = "status_id", nullable = false)

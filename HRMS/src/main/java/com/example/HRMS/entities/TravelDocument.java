@@ -1,5 +1,6 @@
 package com.example.HRMS.entities;
 
+import com.example.HRMS.enums.DocumentTypes;
 import com.example.HRMS.enums.OwnerType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,14 +26,14 @@ public class TravelDocument {
     private Travel travel;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "uploadedby_id", nullable = false)
     private Employee uploadedBy;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Column(name = "file_type")
-    private String fileType; // ***
+    @Column(name = "document_type")
+    private DocumentTypes documentType; // ***
 
     @Enumerated(EnumType.STRING)
     @Column(name = "owner_type", nullable = false)
@@ -40,6 +41,9 @@ public class TravelDocument {
 
     @CreationTimestamp
     private LocalDateTime uploadTime;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @Column(name = "storage_url", nullable = false, length = 512)
     private String storageUrl;

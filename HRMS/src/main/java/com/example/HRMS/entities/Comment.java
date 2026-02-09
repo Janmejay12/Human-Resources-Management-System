@@ -25,7 +25,10 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "commented_by_id")
-    private EmployeeProfile commentedBy;
+    private Employee commentedBy;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @Column(name = "comment_text", nullable = false)
     private String commentText;

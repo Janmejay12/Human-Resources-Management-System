@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,14 +17,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AchievementPost {
+public class  AchievementPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long achievementPostId;
 
     @ManyToOne
-    @JoinColumn(name = "employee_profile_id")
-    private EmployeeProfile employeeProfile;
+    @JoinColumn(name = "author_id", nullable = true)
+    private Employee author;
 
     @OneToMany(mappedBy = "achievementPost", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
@@ -33,11 +34,15 @@ public class AchievementPost {
     @Column(name = "post-title",nullable = false)
     private String title;
 
-    private String description;
+    private String content;
 
-    @OneToMany(mappedBy = "achievementPosts",cascade = CascadeType.ALL)
-    private List<EmployeeProfile> tags = new ArrayList<>();
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @CreationTimestamp
     private LocalDateTime createAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+
 }

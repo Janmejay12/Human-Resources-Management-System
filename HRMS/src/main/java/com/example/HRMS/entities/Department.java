@@ -23,16 +23,20 @@ public class Department {
     private Long departmentId;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
-    private List<Employee> emploees = new ArrayList<>();
+    private List<Employee> employees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    private List<Job> jobs = new ArrayList<>();
 
     @Column(name = "department_name", nullable = false)
     private String departmentName;
 
-    @Column(nullable = false)
-    private boolean isActive;
 
     @Column(name = "department_code",nullable = false)
     private String departmentCode;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

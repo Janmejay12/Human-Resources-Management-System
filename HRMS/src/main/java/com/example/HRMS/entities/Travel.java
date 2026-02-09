@@ -20,15 +20,18 @@ public class Travel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long travelId;
 
+    private String travelTitle;
+
     @Column(nullable = false)
     private String location;
 
     private String purpose;
 
-    @Temporal(TemporalType.DATE)
     private Date startDate;
 
-    @Temporal(TemporalType.DATE)
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     private Date endDate;
 
     @ManyToMany(mappedBy = "travels")

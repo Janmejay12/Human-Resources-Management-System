@@ -24,7 +24,10 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private Roles roleName;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<Employee> employees = new ArrayList<>();
 
 }

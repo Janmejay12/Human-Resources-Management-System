@@ -23,10 +23,8 @@ public class Employee {
     @Column(name = "employee_name", nullable = false)
     private String employeeName;
 
-    @Temporal(TemporalType.DATE)
     private Date birthDate;
 
-    @Temporal(TemporalType.DATE)
     private Date joiningDate;
 
     @Column(unique = true, nullable = false)
@@ -39,9 +37,15 @@ public class Employee {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @Column(name = "username", nullable = false)
+    private String userName;
+
     @ManyToOne()
     @JoinColumn(name = "manager_id")
     private Employee manager;
+
+    @OneToMany(mappedBy = "manager")
+    private List<Employee> directReports = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "role_id")
@@ -59,10 +63,23 @@ public class Employee {
     @OneToMany(mappedBy = "uploadedBy")
     private List<TravelDocument> travelDocuments = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employee_profile_id", nullable = false)
-    private EmployeeProfile employeeProfile;
+    @ManyToMany()
+    @JoinTable(
+            name = "employee_bookSlots",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_slot_id")
+    )
+    private List<BookSlot> bookSlots = new ArrayList<>();
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author")
+    private List<AchievementPost> posts = new ArrayList<>();
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "commentedBy", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "referalGivenBy", cascade = CascadeType.ALL)
     private List<Referal> referrals = new ArrayList<>();
 }
