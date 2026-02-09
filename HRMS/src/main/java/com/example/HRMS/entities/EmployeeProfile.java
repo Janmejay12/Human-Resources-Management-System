@@ -23,8 +23,16 @@ public class EmployeeProfile {
     @Column(name = "username", nullable = false)
     private String userName;
 
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "employeeProfile", cascade = CascadeType.ALL)
     private Employee employee;
+
+    @ManyToMany()
+    @JoinTable(
+            name = "employee_travel",
+            joinColumns = @JoinColumn(name = "employee_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_slot_id")
+    )
+    private List<BookSlot> bookSlots = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee_profile", cascade = CascadeType.ALL)
     private List<AchievementPost> achievementPosts = new ArrayList<>();

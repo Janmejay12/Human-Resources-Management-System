@@ -16,7 +16,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "achievement_posts")
 public class AchievementPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +25,7 @@ public class AchievementPost {
     @JoinColumn(name = "employee_profile_id")
     private EmployeeProfile employeeProfile;
 
-    @OneToMany(mappedBy = "achievement_posts", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "achievementPost", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     private int likesCount;
@@ -36,7 +35,7 @@ public class AchievementPost {
 
     private String description;
 
-    @OneToMany(mappedBy = "achievement_posts",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "achievementPosts",cascade = CascadeType.ALL)
     private List<EmployeeProfile> tags = new ArrayList<>();
 
     @CreationTimestamp

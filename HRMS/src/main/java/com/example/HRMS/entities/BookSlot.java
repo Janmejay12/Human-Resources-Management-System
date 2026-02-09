@@ -1,6 +1,5 @@
 package com.example.HRMS.entities;
 
-import com.example.HRMS.enums.Statuses;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,13 +32,8 @@ public class BookSlot {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "employee_book_slot",
-            joinColumns = @JoinColumn(name = "book_slot_id"),
-            inverseJoinColumns = @JoinColumn(name = "employee_id")
-    )
-    private List<Employee> players = new ArrayList<>();
+    @ManyToMany(mappedBy = "bookSlots")
+    private List<EmployeeProfile> players = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "booked_by_id", nullable = false)
@@ -47,7 +41,7 @@ public class BookSlot {
 
     @ManyToOne()
     @JoinColumn(name = "status_id", nullable = false)
-    private Statuses status;
+    private Status status;
 
     @CreationTimestamp
     private Date createdAt;

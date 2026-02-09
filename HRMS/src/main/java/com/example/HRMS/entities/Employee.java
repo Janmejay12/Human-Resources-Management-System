@@ -53,18 +53,14 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "travel_id")
     )
-    private List<Travel> tarvels = new ArrayList<>();
+    private List<Travel> travels = new ArrayList<>();
 
-    @ManyToMany()
-    @JoinTable(
-            name = "employee_travel_document",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "travel_document_id")
-    )
+
+    @OneToMany(mappedBy = "uploadedBy")
     private List<TravelDocument> travelDocuments = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "employee_profile_id", nullable = false)
     private EmployeeProfile employeeProfile;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)

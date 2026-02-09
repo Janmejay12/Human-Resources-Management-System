@@ -20,6 +20,7 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long statusId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status_name", nullable = false)
     private Statuses statusName;
 

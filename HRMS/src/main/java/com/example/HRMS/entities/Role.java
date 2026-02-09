@@ -21,6 +21,7 @@ public class Role {
     private Long roleId;
 
     @Column(name = "role_name", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Roles roleName;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)

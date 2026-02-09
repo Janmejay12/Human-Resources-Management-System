@@ -31,6 +31,9 @@ public class Travel {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
+    @ManyToMany(mappedBy = "travels")
+    private List<Employee> employees =new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "status_id")
     private Status status;

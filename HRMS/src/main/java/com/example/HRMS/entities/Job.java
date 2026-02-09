@@ -1,7 +1,6 @@
 package com.example.HRMS.entities;
 
 import com.example.HRMS.enums.EmployementType;
-import com.example.HRMS.enums.Statuses;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,6 +38,7 @@ public class Job {
     private String salaryRange;
 
     @Column(name = "employement_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private EmployementType employmentType; //
 
     @Temporal(TemporalType.DATE)
@@ -46,7 +46,7 @@ public class Job {
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
-    private Statuses status;
+    private Status status;
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     private List<Referal> referals = new ArrayList<>();

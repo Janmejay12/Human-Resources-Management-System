@@ -43,10 +43,12 @@ public class Expense {
     private LocalDateTime expenseDate;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ExpenseCategory expenseCategory;
 
-    @ManyToOne()
-    @JoinColumn(name = "expense_status_id",nullable = false)
+
+    @Column(name = "expense_status",nullable = false)
+    @Enumerated(EnumType.STRING)
     private ExpenseStatus expenseStatus;
 
     @Column(name = "hr_remarks", nullable = false)
