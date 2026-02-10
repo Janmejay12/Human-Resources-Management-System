@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JWTService {
     @Value("${jwt.secretKey}")
-    private String secretkey;
+    private String secretKey;
 
     @Value("${jwt.expirationTime}")
     private long expirationTime;
@@ -29,7 +30,7 @@ public class JWTService {
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime));
 
-        return builder.signWith(SignatureAlgorithm.HS256, secretkey)
+        return builder.signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -55,16 +56,9 @@ public class JWTService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parser()
-                .setSigningKey(getSignInKey())
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretkey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+
 
 }

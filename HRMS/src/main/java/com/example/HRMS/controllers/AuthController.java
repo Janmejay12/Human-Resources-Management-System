@@ -3,8 +3,11 @@ package com.example.HRMS.controllers;
 import com.example.HRMS.dtos.request.LoginRequest;
 import com.example.HRMS.dtos.response.LoginResponse;
 import com.example.HRMS.services.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,11 +22,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(LoginRequest request){
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request,  HttpServletResponse response){
 
         try{
-            String token = authService.authenticateUser(request);
-            return ResponseEntity.ok(new LoginResponse(token));
+            LoginResponse loginResponse = authService.authenticateUser(request);
+            ResponseCookie cookie =
+                    ResponseCookie
+                            .from("token",loginResponse.getToken())
+                            .httpOnly(true)
+                            .secure(false)
+                            .path("/")
+                            .maxAge(60 * 60)
+                            .sameSite("Lax")
+                            .build();
+            response.addHeader("Set-Cookie",cookie.toString());
+            System.out.println(cookie);
+            return ResponseEntity.ok(loginResponse);
+
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new LoginResponse("Login Failed: " + e.getMessage()));
         }

@@ -82,4 +82,6 @@ public class Employee {
 
     @OneToMany(mappedBy = "referalGivenBy", cascade = CascadeType.ALL)
     private List<Referal> referrals = new ArrayList<>();
+
+
 }
