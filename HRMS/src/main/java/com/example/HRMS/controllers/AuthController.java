@@ -36,7 +36,6 @@ public class AuthController {
                             .sameSite("Lax")
                             .build();
             response.addHeader("Set-Cookie",cookie.toString());
-            System.out.println(cookie);
             return ResponseEntity.ok(loginResponse);
 
         } catch (Exception e) {

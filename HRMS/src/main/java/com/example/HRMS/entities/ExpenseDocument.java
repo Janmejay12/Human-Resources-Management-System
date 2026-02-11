@@ -19,12 +19,6 @@ public class ExpenseDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long expenseDocumentId;
 
-    @Column(name = "file_name", nullable = false)
-    private String fileName;
-
-    @Column(name = "file_type")
-    private String fileType;
-
     @ManyToOne()
     @JoinColumn(name = "expense_id", nullable = false)
     private Expense expense;
