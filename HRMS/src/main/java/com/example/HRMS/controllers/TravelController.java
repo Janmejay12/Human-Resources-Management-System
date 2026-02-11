@@ -21,19 +21,18 @@ public class TravelController {
         this.travelService = travelService;
     }
 
-    //@PreAuthorize("hasRole('HR')")
+    @PreAuthorize("hasRole('HR')")
     @PostMapping()
-    public ResponseEntity<TravelResponse> createTravel( @Valid @RequestBody TravelCreateRequest request){
+    public ResponseEntity<?> createTravel( @Valid @RequestBody TravelCreateRequest request){
         try{
             TravelResponse travelResponse = travelService.createTravel(request);
-            System.out.println(travelResponse.getTravellers() + travelResponse.getTravelTitle());
             return ResponseEntity.ok(travelResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-        @PreAuthorize("hasRole('HR')")
+       // @PreAuthorize("hasRole('HR')")
         @GetMapping()
     public ResponseEntity<List<TravelResponse>> getAllTravels(){
             try{

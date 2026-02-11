@@ -44,6 +44,9 @@ public class Employee {
     @JoinColumn(name = "manager_id")
     private Employee manager;
 
+    @OneToMany(mappedBy = "travelCreatedBy")
+    private List<Travel> travelsCreated = new ArrayList<>();
+
     @OneToMany(mappedBy = "manager")
     private List<Employee> directReports = new ArrayList<>();
 

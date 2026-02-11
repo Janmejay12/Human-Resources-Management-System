@@ -23,7 +23,7 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('Admin')")
-    @PostMapping("/registerEmployee")
+    @PostMapping("/register-employee")
     public ResponseEntity<RegisterResponse> registerEmployee(@Valid @RequestBody RegisterRequest request){
         try{
             return ResponseEntity.ok(adminService.registerEmployee(request));

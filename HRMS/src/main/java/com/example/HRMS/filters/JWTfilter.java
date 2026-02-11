@@ -52,7 +52,7 @@ public class JWTfilter extends OncePerRequestFilter {
 
         String jwt = authHeader.substring(7);
 
-        if(jwt == null && request.getCookies() != null){
+        if( request.getCookies() != null){
             for(Cookie c : request.getCookies()){
                 if("token".equals(c.getName())){
                     jwt = c.getValue();
@@ -66,6 +66,7 @@ public class JWTfilter extends OncePerRequestFilter {
             if (userEmail != null && authentication == null) {
                 UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken

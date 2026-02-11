@@ -1,5 +1,6 @@
 package com.example.HRMS.dtos.response;
 
+import com.example.HRMS.enums.Statuses;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,5 @@ public class TravelResponse {
     private Date startDate;
     private Date endDate;
     private List<String> travellers;
-    private String status;
+    private Statuses status;
 }

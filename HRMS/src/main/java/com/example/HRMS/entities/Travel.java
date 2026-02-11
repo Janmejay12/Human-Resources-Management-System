@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,10 @@ public class Travel {
 
     @ManyToMany(mappedBy = "travels")
     private List<Employee> employees =new ArrayList<>();
+
+    @ManyToOne()
+    @JoinColumn(name = "travel_created_by_id")
+    private Employee travelCreatedBy;
 
     @ManyToOne
     @JoinColumn(name = "status_id")

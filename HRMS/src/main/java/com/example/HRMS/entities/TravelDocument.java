@@ -33,11 +33,11 @@ public class TravelDocument {
     private String fileName;
 
     @Column(name = "document_type")
-    private DocumentTypes documentType; // ***
+    private DocumentTypes documentType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "owner_type", nullable = false)
-    private OwnerType ownerType; // yet to decide the mapping
+    private OwnerType ownerType;
 
     @CreationTimestamp
     private LocalDateTime uploadTime;
