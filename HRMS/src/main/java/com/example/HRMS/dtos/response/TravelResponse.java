@@ -18,6 +18,7 @@ public class TravelResponse {
     private String location;
     private String purpose;
     private Date startDate;
+    private String travelCreatedBy;
     private Date endDate;
     private List<String> travellers;
     private Statuses status;

@@ -34,7 +34,7 @@ public class ExpenseController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by-travel/{id}")
     public ResponseEntity<List<ExpenseResponse>> getAllExpensesByTravelId(@PathVariable Long id){
         try{
             return ResponseEntity.ok(expenseService.getAllExpensesByTravelId(id));
@@ -42,7 +42,7 @@ public class ExpenseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by-employee/{id}")
     public ResponseEntity<List<ExpenseResponse>> getAllExpensesByEmployeeId(@PathVariable Long id){
         try{
             return ResponseEntity.ok(expenseService.getAllExpensesByEmployeeId(id));

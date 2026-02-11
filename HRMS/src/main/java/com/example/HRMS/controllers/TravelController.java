@@ -3,11 +3,13 @@ package com.example.HRMS.controllers;
 import com.example.HRMS.dtos.request.TravelCreateRequest;
 import com.example.HRMS.dtos.response.RegisterResponse;
 import com.example.HRMS.dtos.response.TravelResponse;
+import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.TravelService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,11 +23,11 @@ public class TravelController {
         this.travelService = travelService;
     }
 
-    @PreAuthorize("hasRole('HR')")
+    //@PreAuthorize("hasRole('HR')")
     @PostMapping()
-    public ResponseEntity<?> createTravel( @Valid @RequestBody TravelCreateRequest request){
+    public ResponseEntity<?> createTravel(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody TravelCreateRequest request){
         try{
-            TravelResponse travelResponse = travelService.createTravel(request);
+            TravelResponse travelResponse = travelService.createTravel(request,user.getUsername());
             return ResponseEntity.ok(travelResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

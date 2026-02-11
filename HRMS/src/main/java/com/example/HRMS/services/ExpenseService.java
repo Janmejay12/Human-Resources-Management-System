@@ -5,7 +5,7 @@ import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Travel;
-import com.example.HRMS.mappers.ExpenseMappper;
+import com.example.HRMS.mappers.ExpenseMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.ExpenseRepository;
 import com.example.HRMS.repos.TravelRepository;
@@ -22,19 +22,17 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final EmployeeRepository employeeRepository;
     private final TravelRepository travelRepository;
-    private final ExpenseMappper expenseMappper;
 
     @Autowired
-    public ExpenseService(ExpenseRepository expenseRepository,ExpenseMappper expenseMappper, EmployeeRepository employeeRepository, TravelRepository travelRepository) {
+    public ExpenseService(ExpenseRepository expenseRepository, EmployeeRepository employeeRepository, TravelRepository travelRepository) {
         this.expenseRepository = expenseRepository;
         this.employeeRepository = employeeRepository;
         this.travelRepository = travelRepository;
-        this.expenseMappper = expenseMappper;
     }
 
     @Transactional
     public ExpenseResponse createExpense(CreateExpenseRequest request){
-        Expense expense = expenseMappper.toEntity(request);
+        Expense expense = ExpenseMapper.toEntity(request);
 
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(
@@ -50,7 +48,7 @@ public class ExpenseService {
 
         expense.setTravel(travel);
         expenseRepository.save(expense);
-        ExpenseResponse response = expenseMappper.toDto(expense);
+        ExpenseResponse response = ExpenseMapper.toDto(expense);
         return response;
     }
 
@@ -62,7 +60,7 @@ public class ExpenseService {
 //                .collect(Collectors.toList());
 
         List<ExpenseResponse> expenseResponseList = expenses.stream()
-                .map(tr -> expenseMappper.toDto(tr))
+                .map(tr -> ExpenseMapper.toDto(tr))
                 .collect(Collectors.toList());
 
         return expenseResponseList;
@@ -76,7 +74,7 @@ public class ExpenseService {
 //                .collect(Collectors.toList());
 
         List<ExpenseResponse> expenseResponseList = expenses.stream()
-                .map(tr -> expenseMappper.toDto(tr))
+                .map(tr -> ExpenseMapper.toDto(tr))
                 .collect(Collectors.toList());
 
         return expenseResponseList;
@@ -87,6 +85,6 @@ public class ExpenseService {
         if (expense.isDeleted())
             throw new EntityNotFoundException("Expense you are looking for is deleted");
         else
-            return expenseMappper.toDto(expense);
+            return ExpenseMapper.toDto(expense);
     }
 }

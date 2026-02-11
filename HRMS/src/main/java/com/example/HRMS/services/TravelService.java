@@ -30,14 +30,19 @@ public class TravelService {
         this.modelMapper = modelMapper;
     }
     @Transactional
-    public TravelResponse createTravel(TravelCreateRequest request) {
+    public TravelResponse createTravel(TravelCreateRequest request, String email) {
 
         Travel travel = new Travel();
+
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
+
         travel.setTravelTitle(request.getTravelTitle());
         travel.setEndDate(request.getEndDate());
         travel.setLocation(request.getLocation());
         travel.setStartDate(request.getStartDate());
         travel.setPurpose(request.getPurpose());
+        travel.setTravelCreatedBy(employee);
 
         Status status = statusRepository.findById(request.getStatusId())
                 .orElseThrow(() -> new EntityNotFoundException("Status not found with ID: " + request.getStatusId()));
@@ -49,45 +54,50 @@ public class TravelService {
                 .filter(e -> !e.isDeleted())
                 .toList();
 
-//        List<Employee> conflictedEmployees = employees.stream()
-//                .filter(emp -> emp.getTravels().stream()
-//                        .anyMatch(tr ->
-//                                // Check if existing travel starts before new ends
-//                                // AND existing travel ends after new starts
-//                                tr.getStartDate().isBefore((request.getEndDate()) &&
-//                                        tr.getEndDate().isAfter(request.getStartDate())
-//                        )
-//                )
-//                .collect(Collectors.toList()));
+        List<Employee> conflictedEmployees = employees.stream()
+                .filter(emp -> emp.getTravels().stream()
+                        .anyMatch(tr ->
+                                // Check if existing travel starts before new ends
+                                // AND existing travel ends after new starts
+                                tr.getStartDate().before(request.getEndDate())
 
+                                        &&
 
+                                        tr.getEndDate().after(request.getStartDate())
+                        )
+                )
+                .collect(Collectors.toList());
 
-      if(employees.size() != request.getEmployeeIds().size()){
+        if(!conflictedEmployees.isEmpty())
+            throw new EntityNotFoundException("Travel date conflict with selected employees.");
+
+       if(employees.size() != request.getEmployeeIds().size()){
           throw new EntityNotFoundException("Invalid employees list");      }
 
       travel.setEmployees(employees);
 
-      for(Employee employee : employees){
-          employee.getTravels().add(travel);
+      for(Employee e : employees){
+          e.getTravels().add(travel);
       }
 
-        Travel saved = travelRepository.save(travel);
+      employeeRepository.saveAllAndFlush(employees);
 
-        TravelResponse travelResponse = modelMapper.map(saved, TravelResponse.class);
-        travelResponse.setStatus(status.getStatusName());
+      TravelResponse travelResponse = new TravelResponse();
+      travelResponse.setStatus(status.getStatusName());
+      travelResponse.setTravelTitle(travel.getTravelTitle());
+      travelResponse.setPurpose(travel.getPurpose());
+      travelResponse.setEndDate(travel.getEndDate());
+      travelResponse.setStartDate(travel.getStartDate());
+      travelResponse.setLocation(travel.getLocation());
+      travelResponse.setTravelCreatedBy(employee.getEmployeeName());
 
-        System.out.println(travelResponse.getStartDate() + " " + travelResponse.getEndDate());
 
-        List<String> employeeNames = employees.stream()
+
+      List<String> employeeNames = employees.stream()
                 .map(Employee::getEmployeeName)
-                .collect(Collectors.toList());
+                        .toList();
 
-        for(String e : employeeNames){
-            System.out.println(e);
-        }
-
-
-        travelResponse.setTravellers(employeeNames);
+      travelResponse.setTravellers(employeeNames);
       return travelResponse;
     }
 

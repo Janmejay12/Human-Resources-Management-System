@@ -58,22 +58,22 @@ public class ExpenseDocumentController {
 
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping("/{id}")
-    public ResponseEntity<List<ExpenseDocumentResponse>> getAllExpenseDocumentsByExpenseID(@PathVariable Long id){
-        try{
-            return ResponseEntity.ok(expenseDocumentService.getAllTravelDocuments());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
-    }
-
-
-
-    //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseDocumentResponse> getExpenseDocumentById(@PathVariable long id){
-        try{
-            return ResponseEntity.ok(ExpenseDocumentService.getTravelDocumentById(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<List<ExpenseDocumentResponse>> getAllExpenseDocumentsByExpenseID(@PathVariable Long id){
+//        try{
+//            return ResponseEntity.ok(expenseDocumentService.getAllTravelDocuments());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+//    }
+//
+//
+//
+//    //@PreAuthorize("hasAnyRole('Employee','HR')")
+//    @GetMapping("/{id}")
+//    public ResponseEntity<ExpenseDocumentResponse> getExpenseDocumentById(@PathVariable long id){
+//        try{
+//            return ResponseEntity.ok(ExpenseDocumentService.getTravelDocumentById(id));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+//    }
 }

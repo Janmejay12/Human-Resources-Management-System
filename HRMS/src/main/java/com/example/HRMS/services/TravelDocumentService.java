@@ -40,6 +40,7 @@ public class TravelDocumentService {
         this.modelMapper = modelMapper;
         this.cloudinary = cloudinary;
     }
+
     @Transactional
     public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file){
         TravelDocument travelDocument = new TravelDocument();
@@ -52,15 +53,17 @@ public class TravelDocumentService {
                         () -> new EntityNotFoundException("Employee not found with ID: " + request.getUploadedById())
                 );
 
-//       if(employee.getRole().getRoleName().equals("HR")){
-//           boolean travelExists = employee.getTravels()
-//                   .stream()
-//                   .anyMatch(tr -> tr.getTravelId().equals(request.getTravelId()));
-//
-//           if(!travelExists){
-//               throw new IllegalArgumentException("Wrong travel and employee record");
-//           }
-//       }
+       String role = employee.getRole().getRoleName().toString();
+
+       if(!"HR".equalsIgnoreCase(role)){
+           boolean travelExists = employee.getTravels()
+                   .stream()
+                   .anyMatch(tr -> tr.getTravelId().equals(request.getTravelId()));
+
+           if(!travelExists){
+               throw new IllegalArgumentException("You are not assigned to this travel");
+           }
+       }
 
        travelDocument.setUploadedBy(employee);
 

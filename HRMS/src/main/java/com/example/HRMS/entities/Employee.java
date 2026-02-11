@@ -54,7 +54,7 @@ public class Employee {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "employee_travel",
             joinColumns = @JoinColumn(name = "employee_id"),
