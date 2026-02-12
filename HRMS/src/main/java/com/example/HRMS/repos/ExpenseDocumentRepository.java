@@ -1,9 +1,17 @@
 package com.example.HRMS.repos;
 
+import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.ExpenseDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface ExpenseDocumentRepository extends JpaRepository<ExpenseDocument, Long> {
+
+    @Query("SELECT ed FROM ExpenseDocument ed WHERE ed.expense.id = :expenseId")
+    List<ExpenseDocument> findAllByExpenseId(@Param("expenseId") Long expenseId);
 }

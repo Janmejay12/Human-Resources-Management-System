@@ -2,12 +2,14 @@ package com.example.HRMS.controllers;
 
 import com.example.HRMS.dtos.request.TravelDocumentRequest;
 import com.example.HRMS.dtos.response.TravelDocumentResponse;
+import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.TravelDocumentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +27,9 @@ public class TravelDocumentController {
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createTravelDocument( @Valid @RequestPart("data") TravelDocumentRequest request,
+    public ResponseEntity<?> createTravelDocument(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestPart("data") TravelDocumentRequest request,
 
-                                                                      @RequestPart("file") MultipartFile file){
+                                                  @RequestPart("file") MultipartFile file){
 
 
         if (file.isEmpty()) {
@@ -49,7 +51,7 @@ public class TravelDocumentController {
         }
         System.out.println("check");
         try {
-            return ResponseEntity.ok(travelDocumentService.createTravelDocument(request,file));
+            return ResponseEntity.ok(travelDocumentService.createTravelDocument(request,file,user.getUsername()));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

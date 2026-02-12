@@ -52,14 +52,14 @@ public class JWTfilter extends OncePerRequestFilter {
 
         String jwt = authHeader.substring(7);
 
-        if( request.getCookies() != null){
-            for(Cookie c : request.getCookies()){
-                if("token".equals(c.getName())){
-                    jwt = c.getValue();
-                    break;
-                }
-            }
-        }
+//        if( request.getCookies() != null){
+//            for(Cookie c : request.getCookies()){
+//                if("token".equals(c.getName())){
+//                    jwt = c.getValue();
+//                    break;
+//                }
+//            }
+//        }
             final String userEmail = jwtService.extractUsername(jwt);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

@@ -1,9 +1,14 @@
 package com.example.HRMS.services;
 
+import com.example.HRMS.dtos.request.ChangeExpenseStatusRequest;
+import com.example.HRMS.dtos.request.ChangeTravelStatusRequest;
 import com.example.HRMS.dtos.request.CreateExpenseRequest;
+import com.example.HRMS.dtos.request.GetExpenseByTravelAndEmployeeId;
 import com.example.HRMS.dtos.response.ExpenseResponse;
+import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Expense;
+import com.example.HRMS.entities.Status;
 import com.example.HRMS.entities.Travel;
 import com.example.HRMS.mappers.ExpenseMapper;
 import com.example.HRMS.repos.EmployeeRepository;
@@ -31,12 +36,12 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ExpenseResponse createExpense(CreateExpenseRequest request){
+    public ExpenseResponse createExpense(CreateExpenseRequest request, String email){
         Expense expense = ExpenseMapper.toEntity(request);
 
-        Employee employee = employeeRepository.findById(request.getEmployeeId())
+        Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Employee not found with ID: " + request.getEmployeeId())
+                        () -> new EntityNotFoundException("Employee not found with email: " + email)
                 );
 
         expense.setEmployee(employee);
@@ -49,6 +54,8 @@ public class ExpenseService {
         expense.setTravel(travel);
         expenseRepository.save(expense);
         ExpenseResponse response = ExpenseMapper.toDto(expense);
+
+
         return response;
     }
 
@@ -66,8 +73,8 @@ public class ExpenseService {
         return expenseResponseList;
     }
 
-    public List<ExpenseResponse> getAllExpensesByEmployeeId(Long employeeId) {
-        List<Expense> expenses = expenseRepository.findAllByEmployeeId(employeeId);
+    public List<ExpenseResponse> getAllExpensesByEmployeeIdAndTravelId(GetExpenseByTravelAndEmployeeId request) {
+        List<Expense> expenses = expenseRepository.findByTravelAndEmployee(request.getTravelId(), request.getEmployeeId());
 
 //        List<Travel> filteredTravels = travels.stream()
 //                .filter(tr -> !tr.isDeleted())
@@ -86,5 +93,28 @@ public class ExpenseService {
             throw new EntityNotFoundException("Expense you are looking for is deleted");
         else
             return ExpenseMapper.toDto(expense);
+    }
+
+    public ExpenseResponse changeExpenseStatus(ChangeExpenseStatusRequest request, String email, Long expenseId){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
+
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + expenseId));
+
+        Employee validEmployee = expense.getTravel().getTravelCreatedBy();
+
+        if(!employee.getEmployeeId().equals(validEmployee.getEmployeeId())){
+            throw new IllegalArgumentException("You are not authorized to update the status");
+        }
+
+        if((expense.getExpenseStatus().equals("Rejected") || expense.getExpenseStatus().equals("Approved")) && request.getStatuse().equals("Draft")){
+            throw new IllegalArgumentException("Status can't be updated as status is : " + expense.getExpenseStatus()+" already." );
+        }
+
+        expense.setExpenseStatus(request.getStatuse());
+        expenseRepository.save(expense);
+
+        return getExpenseById(expense.getExpenseId());
     }
 }

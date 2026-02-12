@@ -12,8 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TravelDocumentResponse {
-    private String traveltile;
-    private String uploadedBy;
+    private Long travelId;
+    private Long uploadedById;
     private String fileName;
     private DocumentTypes documentType;
     private OwnerType ownerType;

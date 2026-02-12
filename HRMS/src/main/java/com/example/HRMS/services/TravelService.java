@@ -1,5 +1,6 @@
 package com.example.HRMS.services;
 
+import com.example.HRMS.dtos.request.ChangeTravelStatusRequest;
 import com.example.HRMS.dtos.request.TravelCreateRequest;
 import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.entities.Employee;
@@ -121,5 +122,31 @@ public class TravelService {
             throw new EntityNotFoundException("Travel you are looking for is deleted");
         else
             return modelMapper.map(travel, TravelResponse.class);
+    }
+
+
+    public TravelResponse changeTravelStatus(ChangeTravelStatusRequest request, String email, Long travelId){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
+
+        Travel travel = travelRepository.findById(travelId)
+                .orElseThrow(() -> new EntityNotFoundException("Travel not found with ID: " + travelId));
+
+        boolean validEmployee = travel.getEmployees().stream()
+                .anyMatch(tr -> tr.getEmployeeId().equals(employee.getEmployeeId()));
+
+        if(!employee.getEmployeeId().equals(travel.getTravelCreatedBy()) && !validEmployee){
+            throw new IllegalArgumentException("You are not authorized to update the status");
+        }
+
+        if((travel.getStatus().equals("Cancelled") || travel.getStatus().equals("Completed")) && request.getStatus().equals("Approved")){
+            throw new IllegalArgumentException("Status can't be updated as status is : " + travel.getStatus()+" already." );
+        }
+        Status status = statusRepository.findByStatusName(request.getStatus().toString());
+
+        travel.setStatus(status);
+        travelRepository.save(travel);
+
+        return getTravelById(travel.getTravelId());
     }
 }

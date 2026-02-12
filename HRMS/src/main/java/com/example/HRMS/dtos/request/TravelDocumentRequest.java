@@ -19,9 +19,6 @@ public class TravelDocumentRequest {
     @NotNull(message = "Travel ID is required")
     private Long travelId;
 
-    @NotNull(message = "Uploaded By ID is required")
-    private Long uploadedById;
-
     @NotBlank(message = "File name is required")
     @Size(min = 3, max = 100, message = "File name must be between 3 and 100 characters")
     private String fileName;

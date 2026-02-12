@@ -55,7 +55,7 @@ public class Expense {
     @Enumerated(EnumType.STRING)
     private ExpenseStatus expenseStatus;
 
-    @Column(name = "hr_remarks", nullable = false)
+    @Column(name = "hr_remarks", nullable = true)
     private String hrRemarks;
 
 }

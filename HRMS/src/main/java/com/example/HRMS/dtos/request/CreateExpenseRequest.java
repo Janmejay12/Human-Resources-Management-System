@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateExpenseRequest {
-    @NotNull(message = "Employee ID is required")
-    @Positive(message = "Employee ID must be a positive number")
-    private Long employeeId;
 
     @NotNull(message = "Travel ID is required")
     @Positive(message = "Travel ID must be a positive number")

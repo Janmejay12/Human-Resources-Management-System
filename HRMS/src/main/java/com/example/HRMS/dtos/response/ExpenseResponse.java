@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExpenseResponse {
-    private String employeeName;
-    private String travelTitle;
+    private Long employeeId;
+    private Long travelId;
     private String currency;
     private BigDecimal amount;
     private LocalDateTime expenseDate;

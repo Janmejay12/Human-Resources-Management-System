@@ -10,11 +10,12 @@ import com.example.HRMS.entities.TravelDocument;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.TravelDocumentRepository;
 import com.example.HRMS.repos.TravelRepository;
+import com.example.HRMS.securityClasses.CustomEmployee;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -42,18 +43,21 @@ public class TravelDocumentService {
     }
 
     @Transactional
-    public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file){
+    public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file,String email){
+
         TravelDocument travelDocument = new TravelDocument();
         travelDocument.setDocumentType(request.getDocumentType());
         travelDocument.setFileName(request.getFileName());
         travelDocument.setOwnerType(request.getOwnerType());
 
-       Employee employee = employeeRepository.findById(request.getUploadedById())
+       Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Employee not found with ID: " + request.getUploadedById())
+                        () -> new EntityNotFoundException("Employee not found with email: " + email)
                 );
 
-       String role = employee.getRole().getRoleName().toString();
+
+        String role = employee.getRole().getRoleName().toString();
+
 
        if(!"HR".equalsIgnoreCase(role)){
            boolean travelExists = employee.getTravels()
@@ -64,7 +68,6 @@ public class TravelDocumentService {
                throw new IllegalArgumentException("You are not assigned to this travel");
            }
        }
-
        travelDocument.setUploadedBy(employee);
 
       Travel travel =  travelRepository.findById(request.getTravelId())
@@ -89,11 +92,14 @@ public class TravelDocumentService {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to upload the file.");
         }
 
-        travelDocument = travelDocumentRepository.save(travelDocument);
-        TravelDocumentResponse travelDocumentResponse = modelMapper.map(travelDocument,TravelDocumentResponse.class);
+        TravelDocumentResponse travelDocumentResponse = new TravelDocumentResponse();
+//        travelDocumentResponse.setUploadedById(employee.getEmployeeId());
+//        travelDocumentResponse.setTravelId(travel.getTravelId());
 
-        travelDocumentResponse.setUploadedBy(employee.getEmployeeName());
-        travelDocumentResponse.setTraveltile(travel.getTravelTitle());
+        travelDocument = travelDocumentRepository.save(travelDocument);
+        travelDocumentResponse = modelMapper.map(travelDocument,TravelDocumentResponse.class);
+
+
         return travelDocumentResponse;
     }
 

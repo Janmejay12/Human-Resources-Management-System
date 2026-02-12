@@ -22,20 +22,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request,  HttpServletResponse response){
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request){
 
         try{
             LoginResponse loginResponse = authService.authenticateUser(request);
-            ResponseCookie cookie =
-                    ResponseCookie
-                            .from("token",loginResponse.getToken())
-                            .httpOnly(true)
-                            .secure(false)
-                            .path("/")
-                            .maxAge(60 * 60)
-                            .sameSite("Lax")
-                            .build();
-            response.addHeader("Set-Cookie",cookie.toString());
+//            ResponseCookie cookie =
+//                    ResponseCookie
+//                            .from("token",loginResponse.getToken())
+//                            .httpOnly(true)
+//                            .secure(false)
+//                            .path("/")
+//                            .maxAge(60 * 60)
+//                            .sameSite("Lax")
+//                            .build();
+//            response.addHeader("Set-Cookie",cookie.toString());
             return ResponseEntity.ok(loginResponse);
 
         } catch (Exception e) {

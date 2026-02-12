@@ -13,6 +13,7 @@ public interface ExpenseRepository extends JpaRepository<Expense,Long> {
     @Query("SELECT e FROM Expense e WHERE e.travel.id = :travelId")
     List<Expense> findAllByTravelId(@Param("travelId") Long travelId);
 
-    @Query("SELECT e FROM Expense e WHERE e.employee.id = :employeeId")
-    List<Expense> findAllByEmployeeId(@Param("employeeId") Long employeeId);
+    @Query("SELECT e FROM Expense e WHERE e.travel.id = :travelId AND e.employee.id = :employeeId")
+    List<Expense> findByTravelAndEmployee(@Param("travelId") Long travelId,
+                                          @Param("employeeId") Long employeeId);
 }

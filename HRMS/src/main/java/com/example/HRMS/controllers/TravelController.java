@@ -1,5 +1,6 @@
 package com.example.HRMS.controllers;
 
+import com.example.HRMS.dtos.request.ChangeTravelStatusRequest;
 import com.example.HRMS.dtos.request.TravelCreateRequest;
 import com.example.HRMS.dtos.response.RegisterResponse;
 import com.example.HRMS.dtos.response.TravelResponse;
@@ -13,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("api/travels")
@@ -40,7 +43,8 @@ public class TravelController {
             try{
                 return ResponseEntity.ok(travelService.getAllTravels());
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
         }
 
     @PreAuthorize("hasRole('HR')")
@@ -49,7 +53,21 @@ public class TravelController {
         try{
             return ResponseEntity.ok(travelService.getTravelById(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> changeTravelStatus(@AuthenticationPrincipal CustomEmployee user
+                                ,@RequestBody ChangeTravelStatusRequest request
+                                ,@PathVariable Long id)
+    {
+        try{
+            return ResponseEntity.ok(travelService.changeTravelStatus(request, user.getUsername(), id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
+
+}
 

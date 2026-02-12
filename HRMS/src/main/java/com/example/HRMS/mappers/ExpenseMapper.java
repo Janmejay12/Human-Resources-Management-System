@@ -32,12 +32,13 @@ public class ExpenseMapper {
 
         ExpenseResponse dto = new ExpenseResponse();
 
-
+        dto.setTravelId(expense.getTravel().getTravelId());
         dto.setCurrency(expense.getCurrency());
         dto.setAmount(expense.getAmount());
         dto.setExpenseDate(expense.getExpenseDate());
         dto.setExpenseCategory(expense.getExpenseCategory());
         dto.setExpenseStatus(expense.getExpenseStatus());
+        dto.setEmployeeId(expense.getEmployee().getEmployeeId());
 
         return dto;
     }

@@ -4,11 +4,14 @@ import com.example.HRMS.dtos.request.CreateExpenseDocumentRequest;
 import com.example.HRMS.dtos.request.TravelDocumentRequest;
 import com.example.HRMS.dtos.response.ExpenseDocumentResponse;
 import com.example.HRMS.dtos.response.TravelDocumentResponse;
+import com.example.HRMS.entities.ExpenseDocument;
+import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.ExpenseDocumentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +29,9 @@ public class ExpenseDocumentController {
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createExpenseDocument(@Valid @RequestPart("data") CreateExpenseDocumentRequest request,
+    public ResponseEntity<?> createExpenseDocument(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestPart("data") CreateExpenseDocumentRequest request,
 
-                                                  @RequestPart("file") MultipartFile file){
+                                                   @RequestPart("file") MultipartFile file){
 
 
         if (file.isEmpty()) {
@@ -49,7 +52,7 @@ public class ExpenseDocumentController {
             return ResponseEntity.badRequest().body("Unsupported file type");
         }
         try {
-            return ResponseEntity.ok(expenseDocumentService.creatExpenseDocument(request,file));
+            return ResponseEntity.ok(expenseDocumentService.creatExpenseDocument(request,file, user.getUsername()));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -58,22 +61,21 @@ public class ExpenseDocumentController {
 
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-//    @GetMapping("/{id}")
-//    public ResponseEntity<List<ExpenseDocumentResponse>> getAllExpenseDocumentsByExpenseID(@PathVariable Long id){
-//        try{
-//            return ResponseEntity.ok(expenseDocumentService.getAllTravelDocuments());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
-//    }
-//
-//
-//
-//    //@PreAuthorize("hasAnyRole('Employee','HR')")
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ExpenseDocumentResponse> getExpenseDocumentById(@PathVariable long id){
-//        try{
-//            return ResponseEntity.ok(ExpenseDocumentService.getTravelDocumentById(id));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
-//    }
+    @GetMapping("/expense/{id}")
+    public ResponseEntity<List<ExpenseDocumentResponse>> getAllExpenseDocumentsByExpenseID(@PathVariable Long id){
+        try{
+            return ResponseEntity.ok(expenseDocumentService.getAllExpenseDocumentsByExpenseID(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+    }
+
+
+    //@PreAuthorize("hasAnyRole('Employee','HR')")
+    @GetMapping("/{id}")
+    public ResponseEntity<ExpenseDocumentResponse> getExpenseDocumentById(@PathVariable long id){
+        try{
+            return ResponseEntity.ok(expenseDocumentService.getExpenseDocumentById(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+    }
 }

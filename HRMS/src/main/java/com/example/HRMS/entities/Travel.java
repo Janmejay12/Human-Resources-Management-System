@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,10 +49,17 @@ public class Travel {
     @JoinColumn(name = "status_id")
     private Status status;
 
+    @Column(name = "max_per_day_allowance")
+    private BigDecimal maxPerDayAllowance;
+
+
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
     private List<TravelDocument> travelDocuments= new ArrayList<>();
 
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
     private List<Expense> expenses= new ArrayList<>();
+
+    @UpdateTimestamp
+    private LocalDateTime statusChangedAt;
 
 }
