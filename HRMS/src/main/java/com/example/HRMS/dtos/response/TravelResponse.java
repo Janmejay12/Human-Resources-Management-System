@@ -14,12 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TravelResponse {
+    private Long travelId;
     private String travelTitle;
     private String location;
     private String purpose;
     private Date startDate;
-    private String travelCreatedBy;
+    private Long travelCreatedBy;
     private Date endDate;
-    private List<String> travellers;
+    private List<Long> travellers;
     private Statuses status;
 }

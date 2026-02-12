@@ -45,6 +45,7 @@ public class TravelService {
         travel.setPurpose(request.getPurpose());
         travel.setTravelCreatedBy(employee);
 
+
         Status status = statusRepository.findById(request.getStatusId())
                 .orElseThrow(() -> new EntityNotFoundException("Status not found with ID: " + request.getStatusId()));
         travel.setStatus(status);
@@ -77,6 +78,7 @@ public class TravelService {
 
       travel.setEmployees(employees);
 
+
       for(Employee e : employees){
           e.getTravels().add(travel);
       }
@@ -86,19 +88,20 @@ public class TravelService {
       TravelResponse travelResponse = new TravelResponse();
       travelResponse.setStatus(status.getStatusName());
       travelResponse.setTravelTitle(travel.getTravelTitle());
+      travelResponse.setTravelId(travel.getTravelId());
       travelResponse.setPurpose(travel.getPurpose());
       travelResponse.setEndDate(travel.getEndDate());
       travelResponse.setStartDate(travel.getStartDate());
       travelResponse.setLocation(travel.getLocation());
-      travelResponse.setTravelCreatedBy(employee.getEmployeeName());
+      travelResponse.setTravelCreatedBy(employee.getEmployeeId());
 
 
 
-      List<String> employeeNames = employees.stream()
-                .map(Employee::getEmployeeName)
+      List<Long> employeeids = employees.stream()
+                .map(Employee::getEmployeeId)
                         .toList();
 
-      travelResponse.setTravellers(employeeNames);
+      travelResponse.setTravellers(employeeids);
       return travelResponse;
     }
 
