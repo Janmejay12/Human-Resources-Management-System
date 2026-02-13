@@ -2,6 +2,7 @@ package com.example.HRMS.dtos.response;
 
 import com.example.HRMS.enums.ExpenseCategory;
 import com.example.HRMS.enums.ExpenseStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,8 @@ public class ExpenseResponse {
     private Long travelId;
     private String currency;
     private BigDecimal amount;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime expenseDate;
     private ExpenseCategory expenseCategory;
     private ExpenseStatus expenseStatus;

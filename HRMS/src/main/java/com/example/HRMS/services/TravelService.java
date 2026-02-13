@@ -6,13 +6,17 @@ import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Status;
 import com.example.HRMS.entities.Travel;
+import com.example.HRMS.enums.Statuses;
+import com.example.HRMS.mappers.TravelMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.StatusRepository;
 import com.example.HRMS.repos.TravelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,18 +37,12 @@ public class TravelService {
     @Transactional
     public TravelResponse createTravel(TravelCreateRequest request, String email) {
 
-        Travel travel = new Travel();
+        Travel travel = TravelMapper.toEntity(request);
 
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 
-        travel.setTravelTitle(request.getTravelTitle());
-        travel.setEndDate(request.getEndDate());
-        travel.setLocation(request.getLocation());
-        travel.setStartDate(request.getStartDate());
-        travel.setPurpose(request.getPurpose());
         travel.setTravelCreatedBy(employee);
-
 
         Status status = statusRepository.findById(request.getStatusId())
                 .orElseThrow(() -> new EntityNotFoundException("Status not found with ID: " + request.getStatusId()));
@@ -61,11 +59,11 @@ public class TravelService {
                         .anyMatch(tr ->
                                 // Check if existing travel starts before new ends
                                 // AND existing travel ends after new starts
-                                tr.getStartDate().before(request.getEndDate())
+                                tr.getStartDate().isBefore(request.getEndDate())
 
                                         &&
 
-                                        tr.getEndDate().after(request.getStartDate())
+                                        tr.getEndDate().isAfter(request.getStartDate())
                         )
                 )
                 .collect(Collectors.toList());
@@ -85,23 +83,8 @@ public class TravelService {
 
       employeeRepository.saveAllAndFlush(employees);
 
-      TravelResponse travelResponse = new TravelResponse();
-      travelResponse.setStatus(status.getStatusName());
-      travelResponse.setTravelTitle(travel.getTravelTitle());
-      travelResponse.setTravelId(travel.getTravelId());
-      travelResponse.setPurpose(travel.getPurpose());
-      travelResponse.setEndDate(travel.getEndDate());
-      travelResponse.setStartDate(travel.getStartDate());
-      travelResponse.setLocation(travel.getLocation());
-      travelResponse.setTravelCreatedBy(employee.getEmployeeId());
+      TravelResponse travelResponse = TravelMapper.toDto(travel);
 
-
-
-      List<Long> employeeids = employees.stream()
-                .map(Employee::getEmployeeId)
-                        .toList();
-
-      travelResponse.setTravellers(employeeids);
       return travelResponse;
     }
 
@@ -113,7 +96,7 @@ public class TravelService {
                 .collect(Collectors.toList());
 
         List<TravelResponse> travelResponseList = filteredTravels.stream()
-                .map(tr -> modelMapper.map(tr, TravelResponse.class))
+                .map(tr -> TravelMapper.toDto(tr))
                 .collect(Collectors.toList());
 
         return travelResponseList;
@@ -127,8 +110,9 @@ public class TravelService {
             return modelMapper.map(travel, TravelResponse.class);
     }
 
-
+    @Transactional
     public TravelResponse changeTravelStatus(ChangeTravelStatusRequest request, String email, Long travelId){
+
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 
@@ -138,14 +122,21 @@ public class TravelService {
         boolean validEmployee = travel.getEmployees().stream()
                 .anyMatch(tr -> tr.getEmployeeId().equals(employee.getEmployeeId()));
 
-        if(!employee.getEmployeeId().equals(travel.getTravelCreatedBy()) && !validEmployee){
-            throw new IllegalArgumentException("You are not authorized to update the status");
-        }
+        boolean isCreator = travel.getTravelCreatedBy().getEmployeeId().equals(employee.getEmployeeId());
 
-        if((travel.getStatus().equals("Cancelled") || travel.getStatus().equals("Completed")) && request.getStatus().equals("Approved")){
-            throw new IllegalArgumentException("Status can't be updated as status is : " + travel.getStatus()+" already." );
+        boolean isTraveller = travel.getEmployees().stream()
+                .anyMatch(e -> e.getEmployeeId().equals(employee.getEmployeeId()));
+
+
+        if(!isCreator && !isTraveller)
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Only craetor of the travel or traveller can update the travel status.");
+
+        Statuses currentStatus = travel.getStatus().getStatusName();
+
+        if((currentStatus == Statuses.Cancelled) || currentStatus == Statuses.Completed){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Status is already finalized");
         }
-        Status status = statusRepository.findByStatusName(request.getStatus().toString());
+        Status status = statusRepository.findByStatusName(request.getStatus());
 
         travel.setStatus(status);
         travelRepository.save(travel);

@@ -10,6 +10,7 @@ import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Status;
 import com.example.HRMS.entities.Travel;
+import com.example.HRMS.enums.ExpenseStatus;
 import com.example.HRMS.mappers.ExpenseMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.ExpenseRepository;
@@ -17,7 +18,9 @@ import com.example.HRMS.repos.TravelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,25 +97,30 @@ public class ExpenseService {
         else
             return ExpenseMapper.toDto(expense);
     }
-
+    @Transactional
     public ExpenseResponse changeExpenseStatus(ChangeExpenseStatusRequest request, String email, Long expenseId){
+
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 
         Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + expenseId));
 
-        Employee validEmployee = expense.getTravel().getTravelCreatedBy();
+        Employee CreatorHR = expense.getTravel().getTravelCreatedBy();
 
-        if(!employee.getEmployeeId().equals(validEmployee.getEmployeeId())){
-            throw new IllegalArgumentException("You are not authorized to update the status");
+        if(!CreatorHR.getEmployeeId().equals(employee.getEmployeeId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You are not authorized to update the status");
         }
 
-        if((expense.getExpenseStatus().equals("Rejected") || expense.getExpenseStatus().equals("Approved")) && request.getStatuse().equals("Draft")){
-            throw new IllegalArgumentException("Status can't be updated as status is : " + expense.getExpenseStatus()+" already." );
+        ExpenseStatus current = expense.getExpenseStatus();
+        ExpenseStatus next = request.getStatus();
+
+        if((current == ExpenseStatus.REJECTED) || (current == ExpenseStatus.APPROVED) && (current == ExpenseStatus.DRAFT)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Expense already finalised");
         }
 
-        expense.setExpenseStatus(request.getStatuse());
+        expense.setExpenseStatus(next);
+
         expenseRepository.save(expense);
 
         return getExpenseById(expense.getExpenseId());
