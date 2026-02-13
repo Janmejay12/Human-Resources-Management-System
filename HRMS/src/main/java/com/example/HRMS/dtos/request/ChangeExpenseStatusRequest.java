@@ -12,5 +12,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChangeExpenseStatusRequest {
-    private ExpenseStatus statuse;
+    private ExpenseStatus status;
 }

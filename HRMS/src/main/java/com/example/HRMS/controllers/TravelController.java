@@ -39,11 +39,11 @@ public class TravelController {
 
        // @PreAuthorize("hasRole('HR')")
         @GetMapping()
-    public ResponseEntity<List<TravelResponse>> getAllTravels(){
+    public ResponseEntity<?> getAllTravels(){
             try{
                 return ResponseEntity.ok(travelService.getAllTravels());
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
         }
 

@@ -31,12 +31,12 @@ public class Travel {
 
     private String purpose;
 
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    private Date endDate;
+    private LocalDateTime endDate;
 
     @ManyToMany(mappedBy = "travels")
     private List<Employee> employees =new ArrayList<>();
