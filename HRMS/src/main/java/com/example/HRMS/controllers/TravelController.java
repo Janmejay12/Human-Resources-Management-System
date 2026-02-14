@@ -6,6 +6,7 @@ import com.example.HRMS.dtos.response.RegisterResponse;
 import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.TravelService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,15 @@ public class TravelController {
             return ResponseEntity.ok(travelService.changeTravelStatus(request, user.getUsername(), id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/my-travels")
+    public ResponseEntity<?> getMyTravels(@AuthenticationPrincipal CustomEmployee user){
+        try{
+            return ResponseEntity.ok(travelService.gettravelsForEmployee(user.getUsername()));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
