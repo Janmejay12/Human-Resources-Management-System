@@ -20,6 +20,8 @@ public class EmployeeResponse {
     @NotBlank(message = "Employee name is required")
     private String employeeName;
 
+    private Long employeeId;
+
     private Date birthDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

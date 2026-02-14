@@ -26,13 +26,11 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final EmployeeRepository employeeRepository;
     private final StatusRepository statusRepository;
-    private final ModelMapper modelMapper;
 
-    public TravelService(TravelRepository travelRepository, ModelMapper modelMapper, EmployeeRepository employeeRepository, StatusRepository statusRepository) {
+    public TravelService(TravelRepository travelRepository, EmployeeRepository employeeRepository, StatusRepository statusRepository) {
         this.travelRepository = travelRepository;
         this.employeeRepository = employeeRepository;
         this.statusRepository = statusRepository;
-        this.modelMapper = modelMapper;
     }
     @Transactional
     public TravelResponse createTravel(TravelCreateRequest request, String email) {
@@ -81,11 +79,11 @@ public class TravelService {
           e.getTravels().add(travel);
       }
 
-      employeeRepository.saveAllAndFlush(employees);
+      Travel savedTravel = travelRepository.saveAndFlush(travel);
 
-      TravelResponse travelResponse = TravelMapper.toDto(travel);
+      TravelResponse travelResponse = TravelMapper.toDto(savedTravel);
 
-      return travelResponse;
+        return travelResponse;
     }
 
     public List<TravelResponse> getAllTravels() {
@@ -107,7 +105,7 @@ public class TravelService {
         if (travel.isDeleted())
             throw new EntityNotFoundException("Travel you are looking for is deleted");
         else
-            return modelMapper.map(travel, TravelResponse.class);
+            return TravelMapper.toDto(travel);
     }
 
     @Transactional
@@ -142,5 +140,13 @@ public class TravelService {
         travelRepository.save(travel);
 
         return getTravelById(travel.getTravelId());
+    }
+
+    public List<TravelResponse> gettravelsForEmployee(String email){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
+        List<Travel> travels = travelRepository.findTravelsByEmployeeId(employee.getEmployeeId());
+
+        return travels.stream().map(TravelMapper :: toDto).toList();
     }
 }

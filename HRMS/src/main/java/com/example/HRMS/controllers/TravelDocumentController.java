@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/travel-documents")
+@RequestMapping("/api/travels")
 public class TravelDocumentController {
 
     private final TravelDocumentService travelDocumentService;
@@ -26,10 +26,10 @@ public class TravelDocumentController {
     }
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/{id}/documents")
     public ResponseEntity<?> createTravelDocument(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestPart("data") TravelDocumentRequest request,
 
-                                                  @RequestPart("file") MultipartFile file){
+                                                  @RequestPart("file") MultipartFile file, @PathVariable Long id){
 
 
         if (file.isEmpty()) {
@@ -49,9 +49,8 @@ public class TravelDocumentController {
                         contentType.equals("image/png"))) {
             return ResponseEntity.badRequest().body("Unsupported file type");
         }
-        System.out.println("check");
         try {
-            return ResponseEntity.ok(travelDocumentService.createTravelDocument(request,file,user.getUsername()));
+            return ResponseEntity.ok(travelDocumentService.createTravelDocument(request,file,user.getUsername(),id));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -60,19 +59,19 @@ public class TravelDocumentController {
 
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping()
-    public ResponseEntity<List<TravelDocumentResponse>> getAllTravelDocuments(){
+    @GetMapping("/{id}/documents")
+    public ResponseEntity<List<TravelDocumentResponse>> getAllTravelDocuments(@PathVariable Long id){
         try{
-            return ResponseEntity.ok(travelDocumentService.getAllTravelDocuments());
+            return ResponseEntity.ok(travelDocumentService.getAllTravelDocuments(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping("/{id}")
-    public ResponseEntity<TravelDocumentResponse> getTravelDocumentById(@PathVariable long id){
+    @GetMapping("/{travelId}/documents/{documentId}")
+    public ResponseEntity<TravelDocumentResponse> getTravelDocumentById(@PathVariable long travelId, @PathVariable long documentId){
         try{
-            return ResponseEntity.ok(travelDocumentService.getTravelDocumentById(id));
+            return ResponseEntity.ok(travelDocumentService.getTravelDocumentById(travelId,documentId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }

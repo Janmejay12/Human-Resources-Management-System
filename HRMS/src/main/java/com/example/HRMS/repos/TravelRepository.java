@@ -11,6 +11,10 @@ import java.util.List;
 
 @Repository
 public interface TravelRepository extends JpaRepository<Travel, Long> {
-
-
+    @Query("""
+SELECT DISTINCT t FROM Travel t 
+JOIN t.employees e 
+WHERE e.employeeId = :employeeId AND t.isDeleted = false
+""")
+List<Travel> findTravelsByEmployeeId(Long employeeId);
 }

@@ -7,6 +7,7 @@ import com.example.HRMS.dtos.response.TravelDocumentResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Travel;
 import com.example.HRMS.entities.TravelDocument;
+import com.example.HRMS.mappers.TravelDocumentMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.TravelDocumentRepository;
 import com.example.HRMS.repos.TravelRepository;
@@ -31,24 +32,19 @@ public class TravelDocumentService {
     private final TravelDocumentRepository travelDocumentRepository;
     private final EmployeeRepository employeeRepository;
     private final TravelRepository travelRepository;
-    private final ModelMapper modelMapper;
     private  final Cloudinary cloudinary;
 
-    public TravelDocumentService(TravelDocumentRepository travelDocumentRepository,Cloudinary cloudinary, EmployeeRepository employeeRepository, TravelRepository travelRepository, ModelMapper modelMapper) {
+    public TravelDocumentService(TravelDocumentRepository travelDocumentRepository,Cloudinary cloudinary, EmployeeRepository employeeRepository, TravelRepository travelRepository) {
         this.travelDocumentRepository = travelDocumentRepository;
         this.employeeRepository = employeeRepository;
         this.travelRepository = travelRepository;
-        this.modelMapper = modelMapper;
         this.cloudinary = cloudinary;
     }
 
     @Transactional
-    public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file,String email){
+    public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file,String email, Long id){
 
-        TravelDocument travelDocument = new TravelDocument();
-        travelDocument.setDocumentType(request.getDocumentType());
-        travelDocument.setFileName(request.getFileName());
-        travelDocument.setOwnerType(request.getOwnerType());
+        TravelDocument travelDocument = TravelDocumentMapper.toEntity(request);
 
        Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
@@ -62,7 +58,7 @@ public class TravelDocumentService {
        if(!"HR".equalsIgnoreCase(role)){
            boolean travelExists = employee.getTravels()
                    .stream()
-                   .anyMatch(tr -> tr.getTravelId().equals(request.getTravelId()));
+                   .anyMatch(tr -> tr.getTravelId().equals(id));
 
            if(!travelExists){
                throw new IllegalArgumentException("You are not assigned to this travel");
@@ -70,9 +66,9 @@ public class TravelDocumentService {
        }
        travelDocument.setUploadedBy(employee);
 
-      Travel travel =  travelRepository.findById(request.getTravelId())
+      Travel travel =  travelRepository.findById(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Travel not found with ID: " + request.getTravelId())
+                        () -> new EntityNotFoundException("Travel not found with ID: " + id)
                 );
 
         travelDocument.setTravel(travel);
@@ -91,21 +87,16 @@ public class TravelDocumentService {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to upload the file.");
         }
-
-        TravelDocumentResponse travelDocumentResponse = new TravelDocumentResponse();
-//        travelDocumentResponse.setUploadedById(employee.getEmployeeId());
-//        travelDocumentResponse.setTravelId(travel.getTravelId());
-
         travelDocument = travelDocumentRepository.save(travelDocument);
-        travelDocumentResponse = modelMapper.map(travelDocument,TravelDocumentResponse.class);
 
+        TravelDocumentResponse travelDocumentResponse = TravelDocumentMapper.toDto(travelDocument);
 
         return travelDocumentResponse;
     }
 
 
-    public List<TravelDocumentResponse> getAllTravelDocuments() {
-        List<TravelDocument> travelDocuments = travelDocumentRepository.findAll();
+    public List<TravelDocumentResponse> getAllTravelDocuments(Long travelId) {
+        List<TravelDocument> travelDocuments = travelDocumentRepository.findAllByTravelId(travelId);
 
         List<TravelDocument> filteredTravelDocuments = travelDocuments.stream()
                 .filter(tr -> !tr.isDeleted())
@@ -113,17 +104,17 @@ public class TravelDocumentService {
 
         List<TravelDocumentResponse> travelDocumentResponseList = filteredTravelDocuments
                 .stream()
-                .map(tr -> modelMapper.map(tr, TravelDocumentResponse.class))
+                .map(tr -> TravelDocumentMapper.toDto(tr))
                 .collect(Collectors.toList());
 
         return travelDocumentResponseList;
     }
 
-    public TravelDocumentResponse getTravelDocumentById(Long travelDocumentId) {
-        TravelDocument travelDocument = travelDocumentRepository.findById(travelDocumentId).orElseThrow(() -> new EntityNotFoundException("Travel Document not found with ID: " + travelDocumentId));
+    public TravelDocumentResponse getTravelDocumentById(Long travelDocumentId, Long docId) {
+        TravelDocument travelDocument = travelDocumentRepository.findByTravelIdAndDocumentId(travelDocumentId,docId);
         if (travelDocument.isDeleted())
             throw new EntityNotFoundException("Travel Document you are looking for is deleted");
         else
-            return modelMapper.map(travelDocument, TravelDocumentResponse.class);
+            return TravelDocumentMapper.toDto(travelDocument);
     }
 }
