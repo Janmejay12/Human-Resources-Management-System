@@ -18,9 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CreateExpenseRequest {
 
-    @NotNull(message = "Travel ID is required")
-    @Positive(message = "Travel ID must be a positive number")
-    private Long travelId;
 
     @NotBlank(message = "Currency is required")
     private String currency;

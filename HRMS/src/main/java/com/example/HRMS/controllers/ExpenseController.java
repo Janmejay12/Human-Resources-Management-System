@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping("/api/travels")
 public class ExpenseController {
     private final ExpenseService expenseService;
 
@@ -25,16 +25,16 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @PostMapping()
-    public ResponseEntity<?> createExpense(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody CreateExpenseRequest request){
+    @PostMapping("/{id}/expenses")
+    public ResponseEntity<?> createExpense(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody CreateExpenseRequest request, @PathVariable Long id){
         try{
-            return ResponseEntity.ok(expenseService.createExpense(request,user.getUsername()));
+            return ResponseEntity.ok(expenseService.createExpense(request,user.getUsername(),id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping("/travel/{id}")
+    @GetMapping("/{id}/expenses")
     public ResponseEntity<List<ExpenseResponse>> getAllExpensesByTravelId(@PathVariable Long id){
         try{
             return ResponseEntity.ok(expenseService.getAllExpensesByTravelId(id));
@@ -42,30 +42,30 @@ public class ExpenseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<List<ExpenseResponse>> getAllExpensesByEmployeeId(@RequestBody GetExpenseByTravelAndEmployeeId request){
+    @PostMapping("/{travelId}/expenses/my-expenses")
+    public ResponseEntity<List<ExpenseResponse>> getMyExpenses(@AuthenticationPrincipal CustomEmployee user,@PathVariable Long travelId, @PathVariable Long employeeId){
         try{
-            return ResponseEntity.ok(expenseService.getAllExpensesByEmployeeIdAndTravelId(request));
+            return ResponseEntity.ok(expenseService.getMyExpenses(travelId,user.getUsername()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
    // @PreAuthorize("hasRole('HR')")
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponse> getExpenseById(@PathVariable long id){
+    @GetMapping("/{travelId}/expenses/{id}")
+    public ResponseEntity<ExpenseResponse> getExpenseById(@PathVariable long travelId,@PathVariable long id){
         try{
-            return ResponseEntity.ok(expenseService.getExpenseById(id));
+            return ResponseEntity.ok(expenseService.getExpenseById(travelId,id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{travelId}/expenses/{expenseId}/status")
     public ResponseEntity<?> changeExpenseStatus(@AuthenticationPrincipal CustomEmployee user
             ,@RequestBody ChangeExpenseStatusRequest request
-            ,@PathVariable Long id)
+            ,@PathVariable Long travelId ,@PathVariable Long expenseId)
     {
         try{
-            return ResponseEntity.ok(expenseService.changeExpenseStatus(request, user.getUsername(), id));
+            return ResponseEntity.ok(expenseService.changeExpenseStatus(request, user.getUsername(), travelId, expenseId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

@@ -7,6 +7,7 @@ import com.example.HRMS.dtos.response.TravelDocumentResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Travel;
 import com.example.HRMS.entities.TravelDocument;
+import com.example.HRMS.enums.Statuses;
 import com.example.HRMS.mappers.TravelDocumentMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.TravelDocumentRepository;
@@ -71,6 +72,9 @@ public class TravelDocumentService {
                         () -> new EntityNotFoundException("Travel not found with ID: " + id)
                 );
 
+      if(travel.getStatus().getStatusName() != Statuses.Approved){
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Travel is not approved by you.");
+      }
         travelDocument.setTravel(travel);
 
         File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename()+"_"+travelDocument.getTravelDocumentId());

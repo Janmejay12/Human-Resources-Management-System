@@ -7,13 +7,18 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense,Long> {
-    @Query("SELECT e FROM Expense e WHERE e.travel.id = :travelId")
+    @Query("SELECT e FROM Expense e WHERE e.travel.travelId = :travelId")
     List<Expense> findAllByTravelId(@Param("travelId") Long travelId);
 
-    @Query("SELECT e FROM Expense e WHERE e.travel.id = :travelId AND e.employee.id = :employeeId")
+    @Query("SELECT e FROM Expense e WHERE e.travel.travelId = :travelId AND e.employee.employeeId = :employeeId")
     List<Expense> findByTravelAndEmployee(@Param("travelId") Long travelId,
                                           @Param("employeeId") Long employeeId);
+
+    @Query("SELECT e FROM Expense e WHERE e.travel.travelId = :travelId AND e.expenseId = :expenseId")
+    Optional<Expense> findByTravelAndExpenseId(@Param("travelId") Long travelId,
+                                                       @Param("expenseId") Long expenseId);
 }

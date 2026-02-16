@@ -45,7 +45,6 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurer() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Configure your specific allowed origins, methods, headers, etc.
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -62,7 +61,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/api/expenses/**").permitAll()
+                       // .requestMatchers(HttpMethod.POST, "/api/jobs/").permitAll()
                         .requestMatchers( "/swagger-ui/**",
                                 "/swagger-ui.html","/v3/api-docs/**").permitAll()
                        .anyRequest().authenticated()

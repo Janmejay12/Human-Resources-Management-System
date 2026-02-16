@@ -30,6 +30,12 @@ public class Employee {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @OneToMany(mappedBy = "createdBy")
+    private List<Job> jobsCreated = new ArrayList<>();
+
+    @OneToMany(mappedBy = "HROwner")
+    private List<Job> jobsOwned = new ArrayList<>();
+
     @Column(nullable = false)
     private String password;
 
@@ -61,6 +67,9 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "travel_id")
     )
     private List<Travel> travels = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "CVReviewers")
+    private List<Job> reviewedJobTitles = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "uploadedBy")
