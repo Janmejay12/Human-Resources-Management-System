@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExpenseResponse {
+    private Long expenseId;
     private Long employeeId;
     private Long travelId;
     private String currency;

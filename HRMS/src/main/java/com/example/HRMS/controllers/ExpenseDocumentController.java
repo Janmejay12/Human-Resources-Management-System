@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/expense-documents")
+@RequestMapping("/api/expenses")
 public class ExpenseDocumentController {
 
     private final ExpenseDocumentService expenseDocumentService;
@@ -28,8 +28,8 @@ public class ExpenseDocumentController {
     }
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createExpenseDocument(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestPart("data") CreateExpenseDocumentRequest request,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/{id}/documents")
+    public ResponseEntity<?> createExpenseDocument(@AuthenticationPrincipal CustomEmployee user, @PathVariable Long id,
 
                                                    @RequestPart("file") MultipartFile file){
 
@@ -52,7 +52,7 @@ public class ExpenseDocumentController {
             return ResponseEntity.badRequest().body("Unsupported file type");
         }
         try {
-            return ResponseEntity.ok(expenseDocumentService.creatExpenseDocument(request,file, user.getUsername()));
+            return ResponseEntity.ok(expenseDocumentService.creatExpenseDocument(id,file, user.getUsername()));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -61,7 +61,7 @@ public class ExpenseDocumentController {
 
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping("/expense/{id}")
+    @GetMapping("/{id}/documents    ")
     public ResponseEntity<List<ExpenseDocumentResponse>> getAllExpenseDocumentsByExpenseID(@PathVariable Long id){
         try{
             return ResponseEntity.ok(expenseDocumentService.getAllExpenseDocumentsByExpenseID(id));
@@ -71,7 +71,7 @@ public class ExpenseDocumentController {
 
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping("/{id}")
+    @GetMapping("/documents/{id}")
     public ResponseEntity<ExpenseDocumentResponse> getExpenseDocumentById(@PathVariable long id){
         try{
             return ResponseEntity.ok(expenseDocumentService.getExpenseDocumentById(id));

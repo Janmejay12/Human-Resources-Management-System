@@ -43,7 +43,7 @@ public class ExpenseController {
     }
 
     @PostMapping("/{travelId}/expenses/my-expenses")
-    public ResponseEntity<List<ExpenseResponse>> getMyExpenses(@AuthenticationPrincipal CustomEmployee user,@PathVariable Long travelId, @PathVariable Long employeeId){
+    public ResponseEntity<List<ExpenseResponse>> getMyExpenses(@AuthenticationPrincipal CustomEmployee user,@PathVariable Long travelId){
         try{
             return ResponseEntity.ok(expenseService.getMyExpenses(travelId,user.getUsername()));
         } catch (Exception e) {

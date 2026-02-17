@@ -38,6 +38,7 @@ public class ExpenseMapper {
         dto.setExpenseDate(expense.getExpenseDate());
         dto.setExpenseCategory(expense.getExpenseCategory());
         dto.setExpenseStatus(expense.getExpenseStatus());
+        dto.setExpenseId(expense.getExpenseId());
         dto.setEmployeeId(expense.getEmployee().getEmployeeId());
 
         return dto;

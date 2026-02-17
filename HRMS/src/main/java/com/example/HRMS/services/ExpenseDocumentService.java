@@ -38,15 +38,15 @@ public class ExpenseDocumentService {
         this.employeeRepository = employeeRepository;
     }
 
-    public ExpenseDocumentResponse creatExpenseDocument(CreateExpenseDocumentRequest request, MultipartFile file, String email)
+    public ExpenseDocumentResponse creatExpenseDocument(Long expenseId, MultipartFile file, String email)
     {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Employee not found with email: " + email)
                 );
 
-        Expense expense = expenseRepository.findById(request.getExpenseId())
-                .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + request.getExpenseId()));
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + expenseId));
 
         boolean validEmployee = expense.getEmployee().getEmployeeId().equals(employee.getEmployeeId());
 
