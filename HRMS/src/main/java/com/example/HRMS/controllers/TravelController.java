@@ -2,21 +2,18 @@ package com.example.HRMS.controllers;
 
 import com.example.HRMS.dtos.request.ChangeTravelStatusRequest;
 import com.example.HRMS.dtos.request.TravelCreateRequest;
-import com.example.HRMS.dtos.response.RegisterResponse;
+import com.example.HRMS.dtos.request.UpdateTravelRequest;
 import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.TravelService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("api/travels")
@@ -79,5 +76,23 @@ public class TravelController {
         }
     }
 
+    @PutMapping("/{travelId}")
+    public ResponseEntity<?> updateTravel(@Valid @RequestBody UpdateTravelRequest request, @PathVariable Long travelId){
+        try{
+            TravelResponse travelResponse = travelService.updateTravel(request,travelId);
+            return ResponseEntity.ok(travelResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTravel(@PathVariable Long id){
+        try{
+            TravelResponse travelResponse = travelService.deleteTravel(id);
+            return ResponseEntity.ok(travelResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
 

@@ -1,6 +1,7 @@
 package com.example.HRMS.mappers;
 
 import com.example.HRMS.dtos.request.CreateExpenseRequest;
+import com.example.HRMS.dtos.request.UpdateExpenseRequest;
 import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.entities.Expense;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,20 @@ public class ExpenseMapper {
         expense.setExpenseCategory(request.getExpenseCategory());
         expense.setExpenseStatus(request.getExpenseStatus());
 
+        return expense;
+    }
+    public static Expense toUpdateEntity(UpdateExpenseRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        Expense expense = new Expense();
+
+
+        expense.setCurrency(request.getCurrency());
+        expense.setAmount(request.getAmount());
+        expense.setExpenseDate(request.getExpenseDate());
+        expense.setExpenseCategory(request.getExpenseCategory());
         return expense;
     }
 

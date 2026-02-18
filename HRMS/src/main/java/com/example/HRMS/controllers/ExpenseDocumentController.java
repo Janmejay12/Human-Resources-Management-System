@@ -61,7 +61,7 @@ public class ExpenseDocumentController {
 
 
     //@PreAuthorize("hasAnyRole('Employee','HR')")
-    @GetMapping("/{id}/documents    ")
+    @GetMapping("/{id}/documents")
     public ResponseEntity<List<ExpenseDocumentResponse>> getAllExpenseDocumentsByExpenseID(@PathVariable Long id){
         try{
             return ResponseEntity.ok(expenseDocumentService.getAllExpenseDocumentsByExpenseID(id));

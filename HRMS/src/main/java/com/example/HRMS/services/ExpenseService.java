@@ -2,7 +2,9 @@ package com.example.HRMS.services;
 
 import com.example.HRMS.dtos.request.ChangeExpenseStatusRequest;
 import com.example.HRMS.dtos.request.CreateExpenseRequest;
+import com.example.HRMS.dtos.request.UpdateExpenseRequest;
 import com.example.HRMS.dtos.response.ExpenseResponse;
+import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Travel;
@@ -128,5 +130,26 @@ public class ExpenseService {
         expenseRepository.save(expense);
 
         return getExpenseById(travelId, expense.getExpenseId());
+    }
+
+    public ExpenseResponse updateExpense(UpdateExpenseRequest request,Long travelId, Long expenseId){
+        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId,expenseId).orElseThrow(() -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
+        expense = ExpenseMapper.toUpdateEntity(request);
+
+        expenseRepository.save(expense);
+        ExpenseResponse response = ExpenseMapper.toDto(expense);
+        return response;
+    }
+
+    public ExpenseResponse deleteExpense(Long travelId, Long expenseId){
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + expenseId));
+
+        if(expense.isDeleted()){
+            throw new IllegalArgumentException("Expense is already deleted");
+        }
+
+        expense.setDeleted(true);
+        return getExpenseById(travelId,expenseId);
     }
 }

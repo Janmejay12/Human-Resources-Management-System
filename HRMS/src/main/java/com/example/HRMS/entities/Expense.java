@@ -50,7 +50,6 @@ public class Expense {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-
     @Column(name = "expense_status",nullable = false)
     @Enumerated(EnumType.STRING)
     private ExpenseStatus expenseStatus;

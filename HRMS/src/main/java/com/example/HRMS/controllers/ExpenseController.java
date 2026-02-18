@@ -71,4 +71,24 @@ public class ExpenseController {
         }
     }
 
+
+    @PutMapping("/{travelId}/expenses/{expenseId}")
+    public ResponseEntity<?> updateTravel(@Valid @RequestBody UpdateExpenseRequest request, @PathVariable Long travelId, @PathVariable Long expenseId){
+        try{
+            ExpenseResponse expenseResponse = expenseService.updateExpense(request,travelId,expenseId);
+            return ResponseEntity.ok(expenseResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/{travelId}/expenses/{expenseId}")
+    public ResponseEntity<?> deleteTravel(@PathVariable Long travelId, @PathVariable Long expenseId){
+        try{
+            ExpenseResponse expenseResponse = expenseService.deleteExpense(travelId,expenseId);
+            return ResponseEntity.ok(expenseResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

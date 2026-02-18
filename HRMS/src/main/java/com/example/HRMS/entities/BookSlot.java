@@ -1,5 +1,7 @@
 package com.example.HRMS.entities;
 
+import com.example.HRMS.enums.SlotBookingStatuses;
+import com.example.HRMS.enums.SlotStatuses;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,27 +24,18 @@ public class BookSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookSlotId;
 
-    @Column(name = "start_time", nullable = false)
-    private Date startTime;
-
-    @Column(name = "end_time", nullable = false)
-    private Date endTime;
-
-    @ManyToOne()
-    @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
-
     @ManyToMany(mappedBy = "bookSlots")
     private List<Employee> players = new ArrayList<>();
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    private String bookedBy;
+    @ManyToOne
+    @JoinColumn(name = "booked_by_id",nullable = false)
+    private Employee bookedBy;
 
-    @ManyToOne()
-    @JoinColumn(name = "status_id", nullable = false)
-    private Status status;
+    @Column(name = "status")
+    private SlotBookingStatuses status;
 
     @CreationTimestamp
     private Date createdAt;

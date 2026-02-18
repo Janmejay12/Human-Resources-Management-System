@@ -1,5 +1,6 @@
 package com.example.HRMS.entities;
 
+import com.example.HRMS.enums.GameOfInterestTypes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -83,6 +84,9 @@ public class Employee {
     )
     private List<BookSlot> bookSlots = new ArrayList<>();
 
+    @OneToMany(mappedBy = "bookedBy")
+    private List<BookSlot> slotsBooked = new ArrayList<>();
+
     @OneToMany(mappedBy = "author")
     private List<AchievementPost> posts = new ArrayList<>();
 
@@ -94,6 +98,9 @@ public class Employee {
 
     @OneToMany(mappedBy = "referalGivenBy", cascade = CascadeType.ALL)
     private List<Referal> referrals = new ArrayList<>();
+
+    @Column(name = "game_of_interest")
+    private GameOfInterestTypes gameOfInterest;
 
 
 }
