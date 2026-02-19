@@ -27,6 +27,10 @@ public class BookSlot {
     @ManyToMany(mappedBy = "bookSlots")
     private List<Employee> players = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "game_slot_id")
+    private GameSlot gameSlot;
+
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 

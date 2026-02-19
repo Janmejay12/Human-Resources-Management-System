@@ -1,13 +1,12 @@
 package com.example.HRMS.services;
 
 import com.example.HRMS.dtos.request.JobRequest;
+import com.example.HRMS.dtos.request.ShareJobRequest;
 import com.example.HRMS.dtos.request.UpdateJobRequest;
 import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.dtos.response.JobResponse;
-import com.example.HRMS.entities.Department;
-import com.example.HRMS.entities.Employee;
-import com.example.HRMS.entities.Expense;
-import com.example.HRMS.entities.Job;
+import com.example.HRMS.dtos.response.ShareJobResponse;
+import com.example.HRMS.entities.*;
 import com.example.HRMS.enums.Roles;
 import com.example.HRMS.mappers.ExpenseMapper;
 import com.example.HRMS.mappers.JobMapper;
@@ -25,11 +24,13 @@ public class JobService {
     private final JobRepository jobRepository;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
+    private final SmtpGmailSenderService smtpGmailSenderService;
 
-    public JobService(JobRepository jobRepository, EmployeeRepository employeeRepository,DepartmentRepository departmentRepository) {
+    public JobService(JobRepository jobRepository,SmtpGmailSenderService smtpGmailSenderService, EmployeeRepository employeeRepository,DepartmentRepository departmentRepository) {
         this.jobRepository = jobRepository;
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
+        this.smtpGmailSenderService = smtpGmailSenderService;
 
     }
 
@@ -125,4 +126,42 @@ public class JobService {
         Job savedJob = jobRepository.save(job);
         return JobMapper.toDto(savedJob);
     }
+
+    public ShareJobResponse shareJob(ShareJobRequest request, Long jobId, String email){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Employee not found with email: " + email)
+                );
+        Job job = jobRepository.findById(jobId).orElseThrow(
+                () -> new EntityNotFoundException("Job not found with ID: " + jobId)
+        );
+
+        for(String e : request.getRecipientEmails())
+        {
+
+            smtpGmailSenderService.sendEmail(
+                    employee.getEmail()
+                    ,e,
+                    String.format("Career Opportunity: %s at Roima Intelligence",
+                            job.getTitle()),
+                    String.format(
+                            "Dear Candidate,\n\n" +
+                                    "I hope this email finds you well.\n\n" +
+                                    "A career opportunity at Roima Intelligence is available that may align with your profile. " +
+                                    "The organization is looking for a %s to join the team in %s.\n\n" +
+                                    "Job Description is attached below.\n" +
+                                    "If interested, please apply from the organization portal.\n\n" +
+                                    "Best regards,\n" +
+                                    "%s\n" +
+                                    "Jr. Software Developer",
+                             job.getTitle(), job.getLocation(), employee.getEmployeeName())
+                    ,job.getJobDescriptionStorageUrl()
+                    ,job.getTitle()+ " JD");
+
+        }
+        ShareJobResponse shareJobResponse = new ShareJobResponse();
+        shareJobResponse.setMessage("Successfully sent emails to all Recipients");
+        return shareJobResponse;
+    }
+
 }

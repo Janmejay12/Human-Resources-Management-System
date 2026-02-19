@@ -9,14 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterResponse {
-    public RegisterResponse(String message) {
-        this.message = message;
-    }
-
+public class OrgChartNodeResponse {
+    private Long employeeId;
     private String employeeName;
     private String designation;
-    private String email;
-    private String userName;
-    private String message;
 }

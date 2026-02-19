@@ -179,7 +179,11 @@ public class TravelService {
         Travel existingTravel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel not found with ID: " + travelId));
 
-        existingTravel = TravelMapper.toUpdatedEntity(request);
+        existingTravel = TravelMapper.toUpdatedEntity(request,existingTravel);
+
+        for(Employee e : existingTravel.getEmployees()){
+            e.getTravels().clear();
+        }
 
         List<Employee> employees = employeeRepository.findAllById(request.getEmployeeIds());
 
@@ -187,40 +191,39 @@ public class TravelService {
                 .filter(e -> !e.isDeleted())
                 .toList();
 
-        List<Employee> conflictedEmployees = employees.stream()
-                .filter(emp -> emp.getTravels().stream()
-                        .anyMatch(tr ->
-                                // Check if existing travel starts before new ends
-                                // AND existing travel ends after new starts
-                                tr.getStartDate().isBefore(request.getEndDate())
-
-                                        &&
-
-                                        tr.getEndDate().isAfter(request.getStartDate())
-                        )
-                )
-                .collect(Collectors.toList());
-
-        if(!conflictedEmployees.isEmpty())
-            throw new EntityNotFoundException("Travel date conflict with selected employees.");
+//        List<Employee> conflictedEmployees = employees.stream()
+//                .filter(emp -> emp.getTravels().stream()
+//                        .anyMatch(tr ->
+//                                // Check if existing travel starts before new ends
+//                                // AND existing travel ends after new starts
+//                                tr.getStartDate().isBefore(request.getEndDate())
+//
+//                                        &&
+//
+//                                        tr.getEndDate().isAfter(request.getStartDate())
+//                        )
+//                )
+//                .collect(Collectors.toList());
+//
+//        if(!conflictedEmployees.isEmpty())
+//            throw new EntityNotFoundException("Travel date conflict with selected employees.");
 
         if(employees.size() != request.getEmployeeIds().size()){
             throw new EntityNotFoundException("Invalid employees list");      }
 
-        existingTravel.setEmployees(employees);
 
+        existingTravel.setEmployees(employees);
 
         for(Employee e : employees){
             e.getTravels().add(existingTravel);
-        }// i want to check if the old travelers are removed or not.
-
+        }
         Travel savedTravel = travelRepository.saveAndFlush(existingTravel);
 
         TravelResponse travelResponse = TravelMapper.toDto(savedTravel);
         return travelResponse;
     }
 
-    public TravelResponse deleteTravel(Long travelId){
+    public String deleteTravel(Long travelId){
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel not found with ID: " + travelId));
 
@@ -229,6 +232,6 @@ public class TravelService {
         }
 
         travel.setDeleted(true);
-        return getTravelById(travelId);
+       return "Travel deleted Successfully.";
     }
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +23,9 @@ public class GameSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gameSlotId;
 
+    @OneToMany(mappedBy = "gameSlot")
+    private List<BookSlot> bookSlots = new ArrayList<>();
+
     @Column(name = "slot_number")
     private Long slotNumber;
 
@@ -30,6 +34,9 @@ public class GameSlot {
 
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
+
+    @Column(name = "slot_date")
+    private LocalDate slotDate;
 
     @ManyToOne()
     @JoinColumn(name = "game_id", nullable = false)

@@ -9,14 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterResponse {
-    public RegisterResponse(String message) {
-        this.message = message;
-    }
-
-    private String employeeName;
-    private String designation;
-    private String email;
-    private String userName;
+public class ShareJobResponse {
     private String message;
 }

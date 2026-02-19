@@ -88,8 +88,7 @@ public class TravelController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTravel(@PathVariable Long id){
         try{
-            TravelResponse travelResponse = travelService.deleteTravel(id);
-            return ResponseEntity.ok(travelResponse);
+            return ResponseEntity.ok(travelService.deleteTravel(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

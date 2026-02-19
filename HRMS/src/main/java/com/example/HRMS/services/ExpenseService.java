@@ -133,15 +133,18 @@ public class ExpenseService {
     }
 
     public ExpenseResponse updateExpense(UpdateExpenseRequest request,Long travelId, Long expenseId){
-        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId,expenseId).orElseThrow(() -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
-        expense = ExpenseMapper.toUpdateEntity(request);
+
+        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId,expenseId).orElseThrow(
+                () -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
+
+        expense = ExpenseMapper.toUpdateEntity(request, expense);
 
         expenseRepository.save(expense);
         ExpenseResponse response = ExpenseMapper.toDto(expense);
         return response;
     }
 
-    public ExpenseResponse deleteExpense(Long travelId, Long expenseId){
+    public String deleteExpense(Long travelId, Long expenseId){
         Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + expenseId));
 
@@ -150,6 +153,6 @@ public class ExpenseService {
         }
 
         expense.setDeleted(true);
-        return getExpenseById(travelId,expenseId);
+        return "Expense Successfully deleted.";
     }
 }

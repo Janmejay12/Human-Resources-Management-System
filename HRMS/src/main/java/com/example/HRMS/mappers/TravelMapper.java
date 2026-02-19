@@ -24,11 +24,10 @@ public class TravelMapper {
         travel.setPurpose(request.getPurpose());
         return travel;
     }
-    public static Travel toUpdatedEntity(UpdateTravelRequest request){
+    public static Travel toUpdatedEntity(UpdateTravelRequest request, Travel travel){
         if (request == null) {
             return null;
         }
-        Travel travel = new Travel();
         travel.setTravelTitle(request.getTravelTitle());
         travel.setEndDate(request.getEndDate());
         travel.setLocation(request.getLocation());

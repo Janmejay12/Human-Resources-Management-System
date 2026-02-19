@@ -1,6 +1,7 @@
 package com.example.HRMS.controllers;
 
 import com.example.HRMS.dtos.request.JobRequest;
+import com.example.HRMS.dtos.request.ShareJobRequest;
 import com.example.HRMS.dtos.request.UpdateJobRequest;
 import com.example.HRMS.dtos.response.JobResponse;
 import com.example.HRMS.securityClasses.CustomEmployee;
@@ -47,5 +48,12 @@ public class JobController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
     }
 
+    @PostMapping("/{id}/share")
+    public ResponseEntity<?> shareJob(@AuthenticationPrincipal CustomEmployee user,@RequestBody ShareJobRequest request, @PathVariable Long id){
+        try{
+            return ResponseEntity.ok(jobService.shareJob(request,id,user.getUsername()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
+    }
 
 }

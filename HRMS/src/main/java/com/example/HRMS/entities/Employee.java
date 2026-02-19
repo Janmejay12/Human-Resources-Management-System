@@ -24,6 +24,9 @@ public class Employee {
     @Column(name = "employee_name", nullable = false)
     private String employeeName;
 
+    @Column(name = "designation", nullable = true)
+    private String designation;
+
     private Date birthDate;
 
     private Date joiningDate;

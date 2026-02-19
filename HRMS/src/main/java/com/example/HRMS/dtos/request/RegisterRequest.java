@@ -20,6 +20,9 @@ public class RegisterRequest {
     @NotBlank(message = "Employee name is required")
     private String employeeName;
 
+    @NotBlank(message = "Employee designation is required")
+    private String designation;
+
     private Date birthDate;
 
     @NotNull(message = "Joining date is required")

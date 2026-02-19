@@ -24,13 +24,10 @@ public class ExpenseMapper {
 
         return expense;
     }
-    public static Expense toUpdateEntity(UpdateExpenseRequest request) {
+    public static Expense toUpdateEntity(UpdateExpenseRequest request, Expense expense) {
         if (request == null) {
             return null;
         }
-
-        Expense expense = new Expense();
-
 
         expense.setCurrency(request.getCurrency());
         expense.setAmount(request.getAmount());

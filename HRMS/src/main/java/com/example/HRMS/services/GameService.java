@@ -9,9 +9,12 @@ import com.example.HRMS.repos.GameRepository;
 import com.example.HRMS.repos.GameSlotRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class GameService {
@@ -44,6 +47,7 @@ public class GameService {
             slot.setStartTime(current);
             slot.setSlotNumber(i); i++;
             slot.setStatus(SlotStatuses.EMPTY);
+            slot.setSlotDate(LocalDate.now());
             slot.setEndTime(current.plusMinutes(game.getSlotMinutes()));
             gameSlotRepository.save(slot);
             current = current.plusMinutes(game.getSlotMinutes());
@@ -57,5 +61,17 @@ public class GameService {
         gameResponse.setOperatingStartHours(game.getOperatingStartHours());
         gameResponse.setOperatingEndHours(game.getOperatingEndHours());
         return gameResponse;
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void changeSlotDateAtMidnight(){
+        LocalDate tomorrow = LocalDate.now();
+        List<GameSlot> allGameSlots = gameSlotRepository.findAll();
+
+        for(GameSlot gs : allGameSlots){
+            gs.setSlotDate(tomorrow);
+        }
+
+        gameSlotRepository.saveAll(allGameSlots);
     }
 }

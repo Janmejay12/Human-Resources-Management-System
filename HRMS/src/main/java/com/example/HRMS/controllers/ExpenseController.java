@@ -42,7 +42,7 @@ public class ExpenseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
     }
 
-    @PostMapping("/{travelId}/expenses/my-expenses")
+    @GetMapping("/{travelId}/expenses/my")
     public ResponseEntity<List<ExpenseResponse>> getMyExpenses(@AuthenticationPrincipal CustomEmployee user,@PathVariable Long travelId){
         try{
             return ResponseEntity.ok(expenseService.getMyExpenses(travelId,user.getUsername()));
@@ -84,8 +84,7 @@ public class ExpenseController {
     @DeleteMapping("/{travelId}/expenses/{expenseId}")
     public ResponseEntity<?> deleteTravel(@PathVariable Long travelId, @PathVariable Long expenseId){
         try{
-            ExpenseResponse expenseResponse = expenseService.deleteExpense(travelId,expenseId);
-            return ResponseEntity.ok(expenseResponse);
+            return ResponseEntity.ok( expenseService.deleteExpense(travelId,expenseId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
