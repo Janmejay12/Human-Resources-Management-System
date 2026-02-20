@@ -14,7 +14,7 @@ import java.time.LocalTime;
 public class GameResponse {
     private Long gameId;
     private String gameName;
-    private int slotMinutes;
+    private Long slotMinutes;
     private LocalTime operatingStartHours;
     private LocalTime operatingEndHours;
 }

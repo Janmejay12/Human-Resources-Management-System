@@ -2,6 +2,7 @@ package com.example.HRMS.services;
 
 import com.example.HRMS.dtos.request.UpdateGameRequest;
 import com.example.HRMS.dtos.response.GameResponse;
+import com.example.HRMS.dtos.response.GameSlotResponse;
 import com.example.HRMS.entities.Game;
 import com.example.HRMS.entities.GameSlot;
 import com.example.HRMS.enums.SlotStatuses;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,6 +65,36 @@ public class GameService {
         return gameResponse;
     }
 
+    public List<GameResponse> getAllGames(){
+        List<Game> games = gameRepository.findAll();
+        List<GameResponse> gameResponses = games.stream().map((game) -> {
+            GameResponse gameResponse = new GameResponse();
+            gameResponse.setGameId(game.getGameId());
+            gameResponse.setGameName(game.getGameName());
+            gameResponse.setSlotMinutes(game.getSlotMinutes());
+            gameResponse.setOperatingStartHours(game.getOperatingStartHours());
+            gameResponse.setOperatingEndHours(game.getOperatingEndHours());
+            return gameResponse;
+        }).toList();
+        return  gameResponses;
+    }
+
+    public List<GameSlotResponse> getAllSlots(Long gameId){
+        List<GameSlot> gameSlots = gameSlotRepository.findAllByGameId(gameId);
+        List<GameSlotResponse> gameSlotResponses = gameSlots.stream().map((gs) -> {
+            GameSlotResponse gameSlotResponse = new GameSlotResponse();
+            gameSlotResponse.setGameId(gs.getGame().getGameId());
+            gameSlotResponse.setGameSlotId(gs.getGameSlotId());
+            gameSlotResponse.setSlotNumber(gs.getSlotNumber());
+            gameSlotResponse.setSlotDate(gs.getSlotDate());
+            gameSlotResponse.setStatus(gs.getStatus());
+            gameSlotResponse.setStartTime(gs.getStartTime());
+            gameSlotResponse.setEndTime(gs.getEndTime());
+            return gameSlotResponse;
+        }).toList();
+        return  gameSlotResponses;
+    }
+
     @Scheduled(cron = "0 0 0 * * ?")
     public void changeSlotDateAtMidnight(){
         LocalDate tomorrow = LocalDate.now();
@@ -74,4 +106,6 @@ public class GameService {
 
         gameSlotRepository.saveAll(allGameSlots);
     }
+
+
 }

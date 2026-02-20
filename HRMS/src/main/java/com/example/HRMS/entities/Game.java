@@ -37,7 +37,7 @@ public class Game {
     private boolean isDeleted = false;
 
     @Column(name = "slot_minutes", nullable = true)
-    private int slotMinutes;
+    private Long slotMinutes;
 
     @Column(name = "operating_start_hours", nullable = true)
     private LocalTime operatingStartHours;

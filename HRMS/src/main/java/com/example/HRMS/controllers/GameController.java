@@ -26,4 +26,23 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+    @GetMapping()
+    public ResponseEntity<?> getAllGames(){
+        try{
+
+            return ResponseEntity.ok(gameService.getAllGames());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/game-slots")
+    public ResponseEntity<?> getAllSlots(@PathVariable Long id){
+        try{
+
+            return ResponseEntity.ok(gameService.getAllSlots(id));
+        } catch (Exception e) { 
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

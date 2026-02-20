@@ -51,8 +51,12 @@ public class OrgChartService {
 
         response.setDirectReports(directReportsresponses);
 
-        response.setDesignation(employee.getDesignation());
-        response.setEmployeeName(employee.getEmployeeName());
+       OrgChartNodeResponse orgChartNodeResponse = new OrgChartNodeResponse();
+       orgChartNodeResponse.setEmployeeName(employee.getEmployeeName());
+       orgChartNodeResponse.setDesignation(employee.getDesignation());
+       orgChartNodeResponse.setEmployeeId(employee.getEmployeeId());
+       response.setSelectedNode(orgChartNodeResponse);
+
         return response;
     }
 }

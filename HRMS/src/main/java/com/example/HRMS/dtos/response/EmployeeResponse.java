@@ -22,6 +22,8 @@ public class EmployeeResponse {
 
     private Long employeeId;
 
+    private String designation;
+
     private Date birthDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

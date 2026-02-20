@@ -23,7 +23,7 @@ public class UpdateGameRequest {
     @Positive(message = "Slot minutes must be positive")
     @Min(value = 30, message = "Slot minutes must be at least 30")
     @Max(value = 60, message = "Slot minutes cannot exceed 60")
-    private Integer slotMinutes;
+    private Long slotMinutes;
 
     @NotNull(message = "Start time is required")
     private LocalTime operatingStartHours;
@@ -31,9 +31,5 @@ public class UpdateGameRequest {
     @NotNull(message = "End time is required")
     private LocalTime operatingEndHours;
 
-    public boolean isValidTimeRange() {
-        return operatingStartHours != null &&
-                operatingEndHours != null &&
-                operatingStartHours.isBefore(operatingEndHours);
-    }
+
 }
