@@ -41,7 +41,7 @@ public class GameController {
         try{
 
             return ResponseEntity.ok(gameService.getAllSlots(id));
-        } catch (Exception e) { 
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

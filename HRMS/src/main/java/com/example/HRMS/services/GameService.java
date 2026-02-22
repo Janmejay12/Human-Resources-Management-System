@@ -95,17 +95,7 @@ public class GameService {
         return  gameSlotResponses;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void changeSlotDateAtMidnight(){
-        LocalDate tomorrow = LocalDate.now();
-        List<GameSlot> allGameSlots = gameSlotRepository.findAll();
 
-        for(GameSlot gs : allGameSlots){
-            gs.setSlotDate(tomorrow);
-        }
-
-        gameSlotRepository.saveAll(allGameSlots);
-    }
 
 
 }

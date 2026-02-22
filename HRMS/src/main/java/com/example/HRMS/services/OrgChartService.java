@@ -26,6 +26,7 @@ public class OrgChartService {
 
         List<Employee> managerialChainList = employeeRepository.findManagementChain(employee.getEmployeeId());
 
+       managerialChainList =  managerialChainList.reversed();
         List<OrgChartNodeResponse> managerialChainResponses = new ArrayList<>();
        for(Employee emp : managerialChainList) {
            OrgChartNodeResponse res = new OrgChartNodeResponse();
@@ -41,7 +42,7 @@ public class OrgChartService {
 
         List<OrgChartNodeResponse> directReportsresponses = new ArrayList<>();
 
-        for(Employee emp : managerialChainList) {
+        for(Employee emp : directReports) {
             OrgChartNodeResponse res = new OrgChartNodeResponse();
             res.setEmployeeId(emp.getEmployeeId());
             res.setDesignation(emp.getDesignation());
