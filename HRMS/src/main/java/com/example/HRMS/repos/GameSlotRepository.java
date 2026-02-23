@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +33,14 @@ public interface GameSlotRepository extends JpaRepository<GameSlot,Long> {
     );
 
     @Query("""
-SELECT g
-FROM GameSlot g
-WHERE g.slotDate = :date
+SELECT gs
+FROM GameSlot gs
+WHERE gs.slotDate = :today
+AND gs.startTime BETWEEN CAST(:now AS time) AND CAST(:cutoffTime AS time)
 """)
-    List<GameSlot> findSlotsForDate(LocalDate date);
+    List<GameSlot> findSlotsForPromotion(
+            @Param("today") LocalDate today,
+            @Param("now") LocalTime now,
+            @Param("cutoffTime") LocalTime cutoffTime
+    );
 }

@@ -72,9 +72,9 @@ public class TravelDocumentService {
                         () -> new EntityNotFoundException("Travel not found with ID: " + id)
                 );
 
-      if(travel.getStatus().getStatusName() != Statuses.Approved){
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Travel is not approved by you.");
-      }
+//      if(travel.getStatus().getStatusName() != Statuses.Approved){
+//          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Travel is not approved by you.");
+//      }
         travelDocument.setTravel(travel);
 
         File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename()+"_"+travelDocument.getTravelDocumentId());

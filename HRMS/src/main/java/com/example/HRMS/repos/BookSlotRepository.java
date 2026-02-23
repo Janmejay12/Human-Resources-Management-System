@@ -8,6 +8,7 @@ import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -57,11 +58,13 @@ AND b.isDeleted = false
 SELECT b
 FROM BookSlot b
 JOIN FETCH b.gameSlot gs
-LEFT JOIN FETCH b.players
 WHERE b.bookedBy.employeeId = :employeeId
 AND gs.slotDate = :today
 AND b.isDeleted = false
 ORDER BY gs.startTime ASC
 """)
-    List<BookSlot> findTodayBookings(Long employeeId, LocalDate today);
+    List<BookSlot> findTodayBookings(
+            @Param("employeeId") Long employeeId,
+            @Param("today") LocalDate today
+    );
 }

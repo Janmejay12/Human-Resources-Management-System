@@ -197,7 +197,6 @@ public class BookSlotService {
                             .endTime(slot.getEndTime())
                             .status(booking.getStatus())
                             .bookedById(booking.getBookedBy().getEmployeeId())
-                            .playerIds(playerIds)
                             .build();
 
             responseList.add(response);

@@ -30,10 +30,12 @@ public class SlotPromotionScheduler {
     public void promoteSlot(){
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
+        LocalTime cutoffTime = now.plusMinutes(22);
+
 
         log.info("Running slot promotion scheduler at {}", now);
 
-        List<GameSlot> slots = gameSlotRepository.findSlotsForDate(today);
+        List<GameSlot> slots = gameSlotRepository.findSlotsForPromotion(today,now,cutoffTime);
 
         for(GameSlot slot : slots){
             LocalTime threshold = slot.getStartTime().minusMinutes(20);

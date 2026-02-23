@@ -49,9 +49,16 @@ public class TravelMapper {
         travelResponse.setMaxPerDayAllowance(travel.getMaxPerDayAllowance());
         travelResponse.setEndDate(travel.getEndDate());
         travelResponse.setStartDate(travel.getStartDate());
+        travelResponse.setCreatedByName(travel.getTravelCreatedBy().getEmployeeName());
+
         travelResponse.setTravellers(travel.getEmployees()
                 .stream()
                 .map(Employee::getEmployeeId)
+                .toList());
+
+        travelResponse.setTravellerNames(travel.getEmployees()
+                .stream()
+                .map(Employee::getEmployeeName)
                 .toList());
         travelResponse.setLocation(travel.getLocation());
         travelResponse.setTravelCreatedBy(travel.getTravelCreatedBy().getEmployeeId());

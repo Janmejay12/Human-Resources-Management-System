@@ -31,4 +31,6 @@ public class TravelResponse {
     private LocalDateTime endDate;
     private List<Long> travellers;
     private Statuses status;
+    private String createdByName;
+    private List<String> travellerNames;
 }
