@@ -39,8 +39,11 @@ public class  AchievementPost {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
+    @Column(name = "post_url_path", nullable = false)
+    private String PostUrlPath;
+
     @CreationTimestamp
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
