@@ -111,4 +111,28 @@ public class PostController {
         }
     }
 
+    @PutMapping("/{id}/like")
+    public ResponseEntity<?> likePost(@AuthenticationPrincipal CustomEmployee user, @PathVariable Long id){
+        try {
+
+            return ResponseEntity.ok( postService.likePost(user.getUsername(),id));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPostById(@PathVariable Long id){
+        try {
+
+            return ResponseEntity.ok( postService.getPostById(id));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+
 }

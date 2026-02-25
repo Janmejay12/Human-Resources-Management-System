@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,19 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
              nativeQuery = true)
      List<Employee> findManagementChain(@Param("empId") Long empId);
 
+     @Query("""
+    SELECT e
+    FROM Employee e
+    WHERE MONTH(e.birthDate) = MONTH(:today)
+      AND DAY(e.birthDate) = DAY(:today)
+""")
+     List<Employee> findEmployeesWithBirthdayToday(@Param("today") LocalDate today);
+
+     @Query("""
+    SELECT e
+    FROM Employee e
+    WHERE MONTH(e.joiningDate) = MONTH(:today)
+      AND DAY(e.joiningDate) = DAY(:today)
+""")
+     List<Employee> findEmployeesWithJoiningDateToday(@Param("today") LocalDate today);
 }

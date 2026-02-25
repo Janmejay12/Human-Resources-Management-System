@@ -19,5 +19,6 @@ public class PostResponse {
     private String content;
     private Long authorId;
     private String postUrlPath;
+    private boolean isSystemPost;
     private List<CommentResponse> comments;
 }

@@ -31,8 +31,11 @@ public class PostMapper {
         response.setContent(achievementPost.getContent());
         response.setLikesCount(achievementPost.getLikesCount());
         response.setTitle(achievementPost.getTitle());
-        response.setAuthorName(achievementPost.getAuthor().getEmployeeName());
-        response.setAuthorId(achievementPost.getAuthor().getEmployeeId());
+        response.setSystemPost(achievementPost.isSystemPost());
+        if(!achievementPost.isSystemPost()){
+            response.setAuthorName(achievementPost.getAuthor().getEmployeeName());
+            response.setAuthorId(achievementPost.getAuthor().getEmployeeId());
+        }
         response.setPostUrlPath(achievementPost.getPostUrlPath());
         response.setComments(achievementPost.getComments()
                 .stream()

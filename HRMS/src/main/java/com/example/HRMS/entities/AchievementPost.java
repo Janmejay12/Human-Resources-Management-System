@@ -47,5 +47,7 @@ public class  AchievementPost {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_system_post")
+    private boolean isSystemPost = false;
 
 }

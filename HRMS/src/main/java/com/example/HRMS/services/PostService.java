@@ -64,6 +64,15 @@ public class PostService {
 
         return PostMapper.toDto(savedPost);
     }
+    public void createSystemPost (PostRequest request){
+
+        AchievementPost post = PostMapper.toEntity(request);
+        post.setSystemPost(true);
+        String urlString = "http://res.cloudinary.com/do1bqwwhv/image/upload/v1771323999/expenseDocuments/g1nnqryuy8a7oa8m9e8v.png";
+        post.setPostUrlPath(urlString);
+        System.out.println("post created");
+        achievementPostRepository.save(post);
+    }
 
     public CommentResponse createComment(CommentRequest request, Long postId, String email){
         Employee author = employeeRepository.findByEmail(email)
@@ -135,6 +144,26 @@ public class PostService {
                 .map(CommentMapper::toDto)
                 .toList();
     }
+    public String likePost(String email, Long postId){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Employee not found with Email: " + email));
 
+        AchievementPost post = achievementPostRepository.findById(postId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Post not found with ID: " + postId));
+
+        post.setLikesCount(post.getLikesCount() + 1);
+        achievementPostRepository.save(post);
+        return "Like done";
+    }
+
+    public PostResponse getPostById(Long postId){
+        AchievementPost post = achievementPostRepository.findById(postId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Post not found with ID: " + postId));
+
+        return PostMapper.toDto(post);
+    }
 
 }
