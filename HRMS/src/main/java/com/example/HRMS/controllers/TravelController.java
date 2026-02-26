@@ -24,7 +24,7 @@ public class TravelController {
         this.travelService = travelService;
     }
 
-    //@PreAuthorize("hasRole('HR')")
+    @PreAuthorize("hasRole('HR')")
     @PostMapping()
     public ResponseEntity<?> createTravel(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody TravelCreateRequest request){
         try{
@@ -35,7 +35,7 @@ public class TravelController {
         }
     }
 
-       // @PreAuthorize("hasRole('HR')")
+        @PreAuthorize("hasRole('HR')")
         @GetMapping()
     public ResponseEntity<?> getAllTravels(){
             try{
@@ -58,7 +58,7 @@ public class TravelController {
     @PutMapping("/{id}/status")
     public ResponseEntity<?> changeTravelStatus(@AuthenticationPrincipal CustomEmployee user
                                 ,@RequestBody ChangeTravelStatusRequest request
-                                ,@PathVariable Long id)
+                                 ,@PathVariable Long id)
     {
         try{
             return ResponseEntity.ok(travelService.changeTravelStatus(request, user.getUsername(), id));
@@ -85,6 +85,8 @@ public class TravelController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTravel(@PathVariable Long id){
         try{

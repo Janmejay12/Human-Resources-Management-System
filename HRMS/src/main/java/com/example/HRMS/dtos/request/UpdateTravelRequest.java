@@ -30,14 +30,12 @@ public class UpdateTravelRequest {
     private BigDecimal maxPerDayAllowance;
 
     @NotNull(message = "Start date is required")
-    @FutureOrPresent(message = "Start date must be today or in the future")
     private LocalDateTime startDate;
 
     @NotNull(message = "List of Employees who are travelling is required")
     private List<Long> employeeIds = new ArrayList<>();
 
     @NotNull(message = "End date is required")
-    @Future(message = "End date must be in the future")
     private LocalDateTime endDate;
 
 }

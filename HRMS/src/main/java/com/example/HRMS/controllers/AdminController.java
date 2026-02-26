@@ -2,7 +2,6 @@ package com.example.HRMS.controllers;
 
 import com.example.HRMS.dtos.request.RegisterRequest;
 import com.example.HRMS.dtos.response.EmployeeResponse;
-import com.example.HRMS.dtos.response.LoginResponse;
 import com.example.HRMS.dtos.response.RegisterResponse;
 import com.example.HRMS.services.AdminService;
 import jakarta.validation.Valid;
@@ -32,7 +31,7 @@ public class AdminController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('Admin','HR')")
+//    @PreAuthorize("hasAnyRole('Admin','HR')")
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeResponse>> getAllEmployees(){
         try{

@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-//@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
