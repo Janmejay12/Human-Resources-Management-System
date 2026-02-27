@@ -153,6 +153,7 @@ public class ExpenseService {
         }
 
         expense.setDeleted(true);
+        expenseRepository.save(expense);
         return "Expense Successfully deleted.";
     }
 }

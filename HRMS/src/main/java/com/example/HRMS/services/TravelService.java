@@ -172,7 +172,11 @@ public class TravelService {
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
         List<Travel> travels = travelRepository.findTravelsByEmployeeId(employee.getEmployeeId());
 
-        return travels.stream().map(TravelMapper :: toDto).toList();
+        List<Travel> filteredTravels = travels.stream()
+                .filter(tr -> !tr.isDeleted())
+                .collect(Collectors.toList());
+
+        return filteredTravels.stream().map(TravelMapper :: toDto).toList();
     }
     @Transactional
     public TravelResponse updateTravel(UpdateTravelRequest request, Long travelId){
@@ -232,6 +236,7 @@ public class TravelService {
         }
 
         travel.setDeleted(true);
+        travelRepository.save(travel);
        return "Travel deleted Successfully.";
     }
 }

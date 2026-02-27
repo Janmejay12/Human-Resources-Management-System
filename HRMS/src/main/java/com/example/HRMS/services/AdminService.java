@@ -74,4 +74,18 @@ public class AdminService {
                 .collect(Collectors.toList());
        return employeeDTOs;
     }
+
+    public EmployeeResponse getEmployeeById(String email){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
+
+        if(employee.isDeleted())
+            throw new IllegalArgumentException("Employee is deleted");
+        EmployeeResponse response = modelMapper.map(employee, EmployeeResponse.class);
+        response.setDepartmentName(employee.getDepartment().getDepartmentName());
+        response.setManagerEmployeeName(employee.getManager().getEmployeeName());
+        response.setRoleName(employee.getRole().getRoleName());
+
+        return  response;
+    }
 }

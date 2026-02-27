@@ -9,6 +9,7 @@ import com.example.HRMS.dtos.response.PostResponse;
 import com.example.HRMS.entities.AchievementPost;
 import com.example.HRMS.entities.Comment;
 import com.example.HRMS.entities.Employee;
+import com.example.HRMS.enums.Roles;
 import com.example.HRMS.mappers.CommentMapper;
 import com.example.HRMS.mappers.PostMapper;
 import com.example.HRMS.repos.AchievementPostRepository;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.List;
 
 @Service
@@ -164,6 +166,27 @@ public class PostService {
                         new EntityNotFoundException("Post not found with ID: " + postId));
 
         return PostMapper.toDto(post);
+    }
+
+    public String deletePost(Long postId, String email){
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Employee not found with Email: " + email));
+        AchievementPost post = achievementPostRepository.findById(postId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Post not found with ID: " + postId));
+
+        if((employee.getEmployeeId().equals(post.getAuthor().getEmployeeId()) || (employee.getRole().getRoleName() == Roles.HR))){
+            if(post.isDeleted()){
+                throw new InvalidParameterException("Post is already deleted.");
+            }else{
+                post.setDeleted(true);
+                achievementPostRepository.save(post);
+                return "Post deleted successfully.";
+            }
+        }else{
+            throw new InvalidParameterException("Not authorized to delete this post");
+        }
     }
 
 }

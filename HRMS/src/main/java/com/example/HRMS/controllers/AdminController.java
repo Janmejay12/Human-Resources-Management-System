@@ -3,11 +3,13 @@ package com.example.HRMS.controllers;
 import com.example.HRMS.dtos.request.RegisterRequest;
 import com.example.HRMS.dtos.response.EmployeeResponse;
 import com.example.HRMS.dtos.response.RegisterResponse;
+import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +40,14 @@ public class AdminController {
             return ResponseEntity.ok(adminService.getAllEmployees());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+    }
+
+    @GetMapping("/employees/my-profile")
+    public ResponseEntity<?> getEmployeeById (@AuthenticationPrincipal CustomEmployee user){
+        try{
+            return ResponseEntity.ok(adminService.getEmployeeById(user.getUsername()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
     }
 
 }

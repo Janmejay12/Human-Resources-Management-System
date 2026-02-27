@@ -29,7 +29,6 @@ public class GameController {
     @GetMapping()
     public ResponseEntity<?> getAllGames(){
         try{
-
             return ResponseEntity.ok(gameService.getAllGames());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

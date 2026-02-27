@@ -32,8 +32,9 @@ public class GameSlotResponse {
 
     private LocalDate slotDate;
 
-
     private Long gameId;
 
     private SlotStatuses status;
+
+
 }
