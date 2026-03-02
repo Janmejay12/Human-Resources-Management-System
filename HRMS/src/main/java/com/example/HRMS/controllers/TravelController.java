@@ -37,9 +37,10 @@ public class TravelController {
 
         @PreAuthorize("hasRole('HR')")
         @GetMapping()
-    public ResponseEntity<?> getAllTravels(){
+    public ResponseEntity<?> getAllTravels(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size){
             try{
-                return ResponseEntity.ok(travelService.getAllTravels());
+                return ResponseEntity.ok(travelService.getAllTravels(page, size));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
@@ -68,9 +69,10 @@ public class TravelController {
     }
 
     @GetMapping("/my-travels")
-    public ResponseEntity<?> getMyTravels(@AuthenticationPrincipal CustomEmployee user){
+    public ResponseEntity<?> getMyTravels(@AuthenticationPrincipal CustomEmployee user,@RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size){
         try{
-            return ResponseEntity.ok(travelService.gettravelsForEmployee(user.getUsername()));
+            return ResponseEntity.ok(travelService.gettravelsForEmployee(user.getUsername(),page,size));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

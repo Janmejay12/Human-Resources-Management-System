@@ -14,7 +14,10 @@ import com.example.HRMS.repos.StatusRepository;
 import com.example.HRMS.repos.TravelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -111,18 +114,13 @@ public class TravelService {
         return travelResponse;
     }
 
-    public List<TravelResponse> getAllTravels() {
-        List<Travel> travels = travelRepository.findAll();
+    public Page<TravelResponse> getAllTravels(int page, int size) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by("startDate").ascending());
 
-        List<Travel> filteredTravels = travels.stream()
-                .filter(tr -> !tr.isDeleted())
-                .collect(Collectors.toList());
+        Page<Travel> travelPage = travelRepository.findByIsDeletedFalse(pageable);
 
-        List<TravelResponse> travelResponseList = filteredTravels.stream()
-                .map(tr -> TravelMapper.toDto(tr))
-                .collect(Collectors.toList());
 
-        return travelResponseList;
+        return travelPage.map(TravelMapper :: toDto);
     }
 
     public TravelResponse getTravelById(Long travelId) {
@@ -142,13 +140,7 @@ public class TravelService {
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel not found with ID: " + travelId));
 
-//        boolean validEmployee = travel.getEmployees().stream()
-//                .anyMatch(tr -> tr.getEmployeeId().equals(employee.getEmployeeId()));
-
         boolean isCreator = travel.getTravelCreatedBy().getEmployeeId().equals(employee.getEmployeeId());
-
-//        boolean isTraveller = travel.getEmployees().stream()
-//                .anyMatch(e -> e.getEmployeeId().equals(employee.getEmployeeId()));
 
 
         if(!isCreator)
@@ -167,17 +159,15 @@ public class TravelService {
         return getTravelById(travel.getTravelId());
     }
 
-    public List<TravelResponse> gettravelsForEmployee(String email){
+    public Page<TravelResponse> gettravelsForEmployee(String email, int page, int size){
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
-        List<Travel> travels = travelRepository.findTravelsByEmployeeId(employee.getEmployeeId());
+        Pageable pageable = PageRequest.of(page,size, Sort.by("startDate").ascending());
 
-        List<Travel> filteredTravels = travels.stream()
-                .filter(tr -> !tr.isDeleted())
-                .collect(Collectors.toList());
-
-        return filteredTravels.stream().map(TravelMapper :: toDto).toList();
+        Page<Travel> travelPage = travelRepository.findDistinctByEmployeesEmployeeIdAndIsDeletedFalse(employee.getEmployeeId(), pageable);
+        return travelPage.map(TravelMapper :: toDto);
     }
+
     @Transactional
     public TravelResponse updateTravel(UpdateTravelRequest request, Long travelId){
         Travel existingTravel = travelRepository.findById(travelId)

@@ -2,6 +2,8 @@ package com.example.HRMS.repos;
 
 import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Travel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,10 +13,11 @@ import java.util.List;
 
 @Repository
 public interface TravelRepository extends JpaRepository<Travel, Long> {
-    @Query("""
-SELECT DISTINCT t FROM Travel t 
-JOIN t.employees e 
-WHERE e.employeeId = :employeeId AND t.isDeleted = false
-""")
-List<Travel> findTravelsByEmployeeId(Long employeeId);
+    Page<Travel> findDistinctByEmployeesEmployeeIdAndIsDeletedFalse(
+            Long employeeId,
+            Pageable pageable
+    );
+
+    Page<Travel> findByIsDeletedFalse(Pageable pageable);
+
 }

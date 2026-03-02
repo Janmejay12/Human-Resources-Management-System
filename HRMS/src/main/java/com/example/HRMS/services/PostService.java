@@ -9,6 +9,7 @@ import com.example.HRMS.dtos.response.PostResponse;
 import com.example.HRMS.entities.AchievementPost;
 import com.example.HRMS.entities.Comment;
 import com.example.HRMS.entities.Employee;
+import com.example.HRMS.entities.Expense;
 import com.example.HRMS.enums.Roles;
 import com.example.HRMS.mappers.CommentMapper;
 import com.example.HRMS.mappers.PostMapper;
@@ -26,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -98,7 +100,11 @@ public class PostService {
 
         List<AchievementPost> posts = achievementPostRepository.findAll();
 
-        return posts.stream()
+        List<AchievementPost> filteredPosts = posts.stream()
+                .filter(tr -> !tr.isDeleted())
+                .collect(Collectors.toList());
+
+        return filteredPosts.stream()
                 .map(PostMapper::toDto)
                 .toList();
     }
@@ -127,7 +133,11 @@ public class PostService {
         List<AchievementPost> posts =
                 achievementPostRepository.findByAuthorOrderByCreatedAtDesc(employee);
 
-        return posts.stream()
+        List<AchievementPost> filteredPosts = posts.stream()
+                .filter(tr -> !tr.isDeleted())
+                .collect(Collectors.toList());
+
+        return filteredPosts.stream()
                 .map(PostMapper::toDto)
                 .toList();
     }
@@ -176,7 +186,7 @@ public class PostService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Post not found with ID: " + postId));
 
-        if((employee.getEmployeeId().equals(post.getAuthor().getEmployeeId()) || (employee.getRole().getRoleName() == Roles.HR))){
+        if(employee.getRole().getRoleName() == Roles.HR){
             if(post.isDeleted()){
                 throw new InvalidParameterException("Post is already deleted.");
             }else{
@@ -185,8 +195,20 @@ public class PostService {
                 return "Post deleted successfully.";
             }
         }else{
-            throw new InvalidParameterException("Not authorized to delete this post");
+            if(employee.getEmployeeId().equals(post.getAuthor().getEmployeeId())){
+                if(post.isDeleted()){
+                    throw new InvalidParameterException("Post is already deleted.");
+                }else{
+                    post.setDeleted(true);
+                    achievementPostRepository.save(post);
+                    return "Post deleted successfully.";
+                }
+            }
+            else{
+                throw new InvalidParameterException("Not authorized to delete this post");
+            }
         }
+
     }
 
 }

@@ -81,6 +81,7 @@ public class ExpenseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
     @DeleteMapping("/{travelId}/expenses/{expenseId}")
     public ResponseEntity<?> deleteTravel(@PathVariable Long travelId, @PathVariable Long expenseId){
         try{
