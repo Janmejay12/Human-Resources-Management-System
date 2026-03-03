@@ -22,8 +22,8 @@ public class BookSlotController {
     }
 
     @PostMapping("/book-slots")
-    public ResponseEntity<?> bookGameSlot(@AuthenticationPrincipal CustomEmployee user,@Valid  @RequestBody BookSlotRequest request){
-        try{
+    public ResponseEntity<?> bookGameSlot(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody BookSlotRequest request) {
+        try {
             return ResponseEntity.ok(bookSlotService.bookSlot(request.getGameSlotId(), user.getUsername(), request.getPlayerIds()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -33,9 +33,8 @@ public class BookSlotController {
     @PutMapping("/cancel/{bookingId}")
     public ResponseEntity<?> cancelBooking(
             @PathVariable Long bookingId
-    )
-    {
-        try{
+    ) {
+        try {
             bookSlotService.cancelBooking(bookingId);
             return ResponseEntity.ok("Booking cancelled successfully");
 

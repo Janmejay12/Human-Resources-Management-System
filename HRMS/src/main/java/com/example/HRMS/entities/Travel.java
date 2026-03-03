@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -39,7 +37,7 @@ public class Travel {
     private LocalDateTime endDate;
 
     @ManyToMany(mappedBy = "travels")
-    private List<Employee> employees =new ArrayList<>();
+    private List<Employee> employees = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "travel_created_by_id")
@@ -54,10 +52,10 @@ public class Travel {
 
 
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
-    private List<TravelDocument> travelDocuments= new ArrayList<>();
+    private List<TravelDocument> travelDocuments = new ArrayList<>();
 
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
-    private List<Expense> expenses= new ArrayList<>();
+    private List<Expense> expenses = new ArrayList<>();
 
     @UpdateTimestamp
     private LocalDateTime statusChangedAt;

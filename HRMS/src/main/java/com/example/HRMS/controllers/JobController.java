@@ -24,36 +24,40 @@ public class JobController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createJob(@AuthenticationPrincipal CustomEmployee user,@Valid @RequestBody JobRequest request){
-        try{
+    public ResponseEntity<?> createJob(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody JobRequest request) {
+        try {
             return ResponseEntity.ok(jobService.createJob(request, user.getUsername()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping()
-    public ResponseEntity<List<JobResponse>> getAllJobs(){
-        try{
+    public ResponseEntity<List<JobResponse>> getAllJobs() {
+        try {
             return ResponseEntity.ok(jobService.getAllJobs());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateJob(@AuthenticationPrincipal CustomEmployee user,@Valid @RequestBody UpdateJobRequest request,
-                                       @PathVariable Long id){
-        try{
-            return ResponseEntity.ok(jobService.updateJob(request,id,user.getUsername()));
+    public ResponseEntity<?> updateJob(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody UpdateJobRequest request,
+                                       @PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(jobService.updateJob(request, id, user.getUsername()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/{id}/share")
-    public ResponseEntity<?> shareJob(@AuthenticationPrincipal CustomEmployee user,@RequestBody ShareJobRequest request, @PathVariable Long id){
-        try{
-            return ResponseEntity.ok(jobService.shareJob(request,id,user.getUsername()));
+    public ResponseEntity<?> shareJob(@AuthenticationPrincipal CustomEmployee user, @RequestBody ShareJobRequest request, @PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(jobService.shareJob(request, id, user.getUsername()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }

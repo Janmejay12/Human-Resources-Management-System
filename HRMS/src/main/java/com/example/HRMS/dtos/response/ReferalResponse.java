@@ -1,6 +1,5 @@
 package com.example.HRMS.dtos.response;
 
-import com.example.HRMS.entities.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

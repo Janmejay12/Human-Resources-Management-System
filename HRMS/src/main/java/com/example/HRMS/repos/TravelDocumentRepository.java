@@ -1,6 +1,5 @@
 package com.example.HRMS.repos;
 
-import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.TravelDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +15,5 @@ public interface TravelDocumentRepository extends JpaRepository<TravelDocument, 
 
     @Query("SELECT td FROM TravelDocument td WHERE td.travel.travelId = :travelId AND td.travelDocumentId = :documentId")
     TravelDocument findByTravelIdAndDocumentId(@Param("travelId") Long travelId,
-                                          @Param("documentId") Long documentId);
+                                               @Param("documentId") Long documentId);
 }

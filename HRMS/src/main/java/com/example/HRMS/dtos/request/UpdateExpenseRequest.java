@@ -1,7 +1,6 @@
 package com.example.HRMS.dtos.request;
 
 import com.example.HRMS.enums.ExpenseCategory;
-import com.example.HRMS.enums.ExpenseStatus;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -2,13 +2,10 @@ package com.example.HRMS.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.HRMS.dtos.request.CreateExpenseDocumentRequest;
 import com.example.HRMS.dtos.response.ExpenseDocumentResponse;
-import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.ExpenseDocument;
-import com.example.HRMS.mappers.ExpenseMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.ExpenseDocumentRepository;
 import com.example.HRMS.repos.ExpenseRepository;
@@ -31,15 +28,14 @@ public class ExpenseDocumentService {
     private final Cloudinary cloudinary;
     private final EmployeeRepository employeeRepository;
 
-    public ExpenseDocumentService(ExpenseDocumentRepository expenseDocumentRepository,EmployeeRepository employeeRepository, Cloudinary cloudinary, ExpenseRepository expenseRepository) {
+    public ExpenseDocumentService(ExpenseDocumentRepository expenseDocumentRepository, EmployeeRepository employeeRepository, Cloudinary cloudinary, ExpenseRepository expenseRepository) {
         this.expenseDocumentRepository = expenseDocumentRepository;
         this.expenseRepository = expenseRepository;
         this.cloudinary = cloudinary;
         this.employeeRepository = employeeRepository;
     }
 
-    public ExpenseDocumentResponse creatExpenseDocument(Long expenseId, MultipartFile file, String email)
-    {
+    public ExpenseDocumentResponse creatExpenseDocument(Long expenseId, MultipartFile file, String email) {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Employee not found with email: " + email)
@@ -50,7 +46,7 @@ public class ExpenseDocumentService {
 
         boolean validEmployee = expense.getEmployee().getEmployeeId().equals(employee.getEmployeeId());
 
-        if(!validEmployee)
+        if (!validEmployee)
             throw new IllegalArgumentException("This expense record doesnt belong to you.");
 
         ExpenseDocument expenseDocument = new ExpenseDocument();
@@ -58,7 +54,7 @@ public class ExpenseDocumentService {
 
         expenseDocument.setExpense(expense);
 
-        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename()+"_"+expenseDocument.getExpenseDocumentId());
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename() + "_" + expenseDocument.getExpenseDocumentId());
         try {
 
             FileOutputStream fos = new FileOutputStream(convFile);
@@ -81,8 +77,7 @@ public class ExpenseDocumentService {
         return expenseDocumentResponse;
     }
 
-    public List<ExpenseDocumentResponse> getAllExpenseDocumentsByExpenseID(Long expenseId)
-    {
+    public List<ExpenseDocumentResponse> getAllExpenseDocumentsByExpenseID(Long expenseId) {
         List<ExpenseDocument> expenseDocuments = expenseDocumentRepository.findAllByExpenseId(expenseId);
 
         List<ExpenseDocumentResponse> expenseDocumentResponses = expenseDocuments.stream()
@@ -93,16 +88,15 @@ public class ExpenseDocumentService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-       return expenseDocumentResponses;
+        return expenseDocumentResponses;
     }
 
-    public ExpenseDocumentResponse getExpenseDocumentById(Long id)
-    {
-       ExpenseDocument expenseDocument = expenseDocumentRepository.findById(id)
+    public ExpenseDocumentResponse getExpenseDocumentById(Long id) {
+        ExpenseDocument expenseDocument = expenseDocumentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Expense Document not found with ID: " + id));
-       ExpenseDocumentResponse res = new ExpenseDocumentResponse();
-       res.setExpenseId(expenseDocument.getExpense().getExpenseId());
-       res.setStorageUrl(expenseDocument.getStorageUrl());
-       return res;
+        ExpenseDocumentResponse res = new ExpenseDocumentResponse();
+        res.setExpenseId(expenseDocument.getExpense().getExpenseId());
+        res.setStorageUrl(expenseDocument.getStorageUrl());
+        return res;
     }
 }

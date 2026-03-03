@@ -31,61 +31,59 @@ public class AdminService {
         this.modelMapper = modelMapper;
     }
 
-    public RegisterResponse registerEmployee(RegisterRequest request){
-        if(employeeRepository.existsByEmail(request.getEmail()) )
-        {
+    public RegisterResponse registerEmployee(RegisterRequest request) {
+        if (employeeRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email address already in use.");
         }
-        if(employeeRepository.existsByUserName(request.getUserName()) )
-        {
+        if (employeeRepository.existsByUserName(request.getUserName())) {
             throw new IllegalArgumentException("username  already in use.");
         }
 
-        Employee employee = modelMapper.map(request,Employee.class);
+        Employee employee = modelMapper.map(request, Employee.class);
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         employee.setPassword(encodedPassword);
 
-        if(request.getDepartmentId() != null){
+        if (request.getDepartmentId() != null) {
             employee.setDepartment(departmentRepository.findById(request.getDepartmentId()).orElseThrow(() -> new EntityNotFoundException("Department not found with ID: " + request.getDepartmentId())));
         }
 
-        if(request.getManagerId() != null){
+        if (request.getManagerId() != null) {
             employee.setManager(employeeRepository.findById(request.getManagerId()).orElseThrow(() -> new EntityNotFoundException("Manager not found with ID: " + request.getManagerId())));
         }
 
-        if(request.getRoleId() != null){
+        if (request.getRoleId() != null) {
             employee.setRole(roleRepository.findById(request.getRoleId()).orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + request.getRoleId())));
         }
-    RegisterResponse response = modelMapper.map(employeeRepository.save(employee),RegisterResponse.class);
-            return response;
+        RegisterResponse response = modelMapper.map(employeeRepository.save(employee), RegisterResponse.class);
+        return response;
     }
 
 
-    public List<EmployeeResponse> getAllEmployees(){
-       List<Employee> employees = employeeRepository.findAll();
+    public List<EmployeeResponse> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
 
-       List<Employee> filteredEmployees = employees.stream()
-               .filter(emp -> !emp.isDeleted())
-               .collect(Collectors.toList());
+        List<Employee> filteredEmployees = employees.stream()
+                .filter(emp -> !emp.isDeleted())
+                .collect(Collectors.toList());
 
-       List<EmployeeResponse> employeeDTOs = filteredEmployees.stream()
+        List<EmployeeResponse> employeeDTOs = filteredEmployees.stream()
                 .map(emp -> modelMapper.map(emp, EmployeeResponse.class))
                 .collect(Collectors.toList());
-       return employeeDTOs;
+        return employeeDTOs;
     }
 
-    public EmployeeResponse getEmployeeById(String email){
+    public EmployeeResponse getEmployeeById(String email) {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 
-        if(employee.isDeleted())
+        if (employee.isDeleted())
             throw new IllegalArgumentException("Employee is deleted");
         EmployeeResponse response = modelMapper.map(employee, EmployeeResponse.class);
         response.setDepartmentName(employee.getDepartment().getDepartmentName());
         response.setManagerEmployeeName(employee.getManager().getEmployeeName());
         response.setRoleName(employee.getRole().getRoleName());
 
-        return  response;
+        return response;
     }
 }

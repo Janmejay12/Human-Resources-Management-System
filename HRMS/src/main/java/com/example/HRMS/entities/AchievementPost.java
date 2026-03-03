@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class  AchievementPost {
+public class AchievementPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long achievementPostId;
@@ -31,7 +31,7 @@ public class  AchievementPost {
 
     private int likesCount;
 
-    @Column(name = "post-title",nullable = false)
+    @Column(name = "post-title", nullable = false)
     private String title;
 
     private String content;

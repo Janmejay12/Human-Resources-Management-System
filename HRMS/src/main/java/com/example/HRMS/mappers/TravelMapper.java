@@ -2,16 +2,14 @@ package com.example.HRMS.mappers;
 
 import com.example.HRMS.dtos.request.TravelCreateRequest;
 import com.example.HRMS.dtos.request.UpdateTravelRequest;
-import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.entities.Employee;
-import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Travel;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TravelMapper {
-    public static Travel toEntity(TravelCreateRequest request){
+    public static Travel toEntity(TravelCreateRequest request) {
         if (request == null) {
             return null;
         }
@@ -24,7 +22,8 @@ public class TravelMapper {
         travel.setPurpose(request.getPurpose());
         return travel;
     }
-    public static Travel toUpdatedEntity(UpdateTravelRequest request, Travel travel){
+
+    public static Travel toUpdatedEntity(UpdateTravelRequest request, Travel travel) {
         if (request == null) {
             return null;
         }
@@ -37,7 +36,7 @@ public class TravelMapper {
         return travel;
     }
 
-    public static TravelResponse toDto(Travel travel){
+    public static TravelResponse toDto(Travel travel) {
         if (travel == null) {
             return null;
         }

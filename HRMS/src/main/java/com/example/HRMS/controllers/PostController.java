@@ -20,11 +20,12 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPost(@AuthenticationPrincipal CustomEmployee user,
                                         @Valid @RequestPart("data") PostRequest request,
                                         @RequestPart("file") MultipartFile file
-    ){
+    ) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File is empty");
         }
@@ -42,8 +43,8 @@ public class PostController {
             return ResponseEntity.badRequest().body("Unsupported file type");
         }
 
-        try{
-            return ResponseEntity.ok(postService.createPost(request,file, user.getUsername()));
+        try {
+            return ResponseEntity.ok(postService.createPost(request, file, user.getUsername()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -51,9 +52,9 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<?> createComment(@AuthenticationPrincipal CustomEmployee user,@Valid @RequestBody CommentRequest request, @PathVariable Long postId){
-        try{
-            return ResponseEntity.ok(postService.createComment(request, postId, user.getUsername() ));
+    public ResponseEntity<?> createComment(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody CommentRequest request, @PathVariable Long postId) {
+        try {
+            return ResponseEntity.ok(postService.createComment(request, postId, user.getUsername()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -112,21 +113,22 @@ public class PostController {
     }
 
     @PutMapping("/{id}/like")
-    public ResponseEntity<?> likePost(@AuthenticationPrincipal CustomEmployee user, @PathVariable Long id){
+    public ResponseEntity<?> likePost(@AuthenticationPrincipal CustomEmployee user, @PathVariable Long id) {
         try {
 
-        return ResponseEntity.ok( postService.likePost(user.getUsername(),id));
+            return ResponseEntity.ok(postService.likePost(user.getUsername(), id));
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable Long id){
+    public ResponseEntity<?> getPostById(@PathVariable Long id) {
         try {
 
-            return ResponseEntity.ok( postService.getPostById(id));
+            return ResponseEntity.ok(postService.getPostById(id));
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -135,10 +137,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePost(@PathVariable Long id, @AuthenticationPrincipal CustomEmployee user){
+    public ResponseEntity<?> deletePost(@PathVariable Long id, @AuthenticationPrincipal CustomEmployee user) {
         try {
 
-            return ResponseEntity.ok( postService.deletePost(id, user.getUsername()));
+            return ResponseEntity.ok(postService.deletePost(id, user.getUsername()));
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

@@ -7,17 +7,13 @@ import com.example.HRMS.dtos.response.TravelDocumentResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Travel;
 import com.example.HRMS.entities.TravelDocument;
-import com.example.HRMS.enums.Statuses;
 import com.example.HRMS.mappers.TravelDocumentMapper;
 import com.example.HRMS.repos.EmployeeRepository;
 import com.example.HRMS.repos.TravelDocumentRepository;
 import com.example.HRMS.repos.TravelRepository;
-import com.example.HRMS.securityClasses.CustomEmployee;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,9 +29,9 @@ public class TravelDocumentService {
     private final TravelDocumentRepository travelDocumentRepository;
     private final EmployeeRepository employeeRepository;
     private final TravelRepository travelRepository;
-    private  final Cloudinary cloudinary;
+    private final Cloudinary cloudinary;
 
-    public TravelDocumentService(TravelDocumentRepository travelDocumentRepository,Cloudinary cloudinary, EmployeeRepository employeeRepository, TravelRepository travelRepository) {
+    public TravelDocumentService(TravelDocumentRepository travelDocumentRepository, Cloudinary cloudinary, EmployeeRepository employeeRepository, TravelRepository travelRepository) {
         this.travelDocumentRepository = travelDocumentRepository;
         this.employeeRepository = employeeRepository;
         this.travelRepository = travelRepository;
@@ -43,11 +39,11 @@ public class TravelDocumentService {
     }
 
     @Transactional
-    public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file,String email, Long id){
+    public TravelDocumentResponse createTravelDocument(TravelDocumentRequest request, MultipartFile file, String email, Long id) {
 
         TravelDocument travelDocument = TravelDocumentMapper.toEntity(request);
 
-       Employee employee = employeeRepository.findByEmail(email)
+        Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Employee not found with email: " + email)
                 );
@@ -56,18 +52,18 @@ public class TravelDocumentService {
         String role = employee.getRole().getRoleName().toString();
 
 
-       if(!"HR".equalsIgnoreCase(role)){
-           boolean travelExists = employee.getTravels()
-                   .stream()
-                   .anyMatch(tr -> tr.getTravelId().equals(id));
+        if (!"HR".equalsIgnoreCase(role)) {
+            boolean travelExists = employee.getTravels()
+                    .stream()
+                    .anyMatch(tr -> tr.getTravelId().equals(id));
 
-           if(!travelExists){
-               throw new IllegalArgumentException("You are not assigned to this travel");
-           }
-       }
-       travelDocument.setUploadedBy(employee);
+            if (!travelExists) {
+                throw new IllegalArgumentException("You are not assigned to this travel");
+            }
+        }
+        travelDocument.setUploadedBy(employee);
 
-      Travel travel =  travelRepository.findById(id)
+        Travel travel = travelRepository.findById(id)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Travel not found with ID: " + id)
                 );
@@ -77,7 +73,7 @@ public class TravelDocumentService {
 //      }
         travelDocument.setTravel(travel);
 
-        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename()+"_"+travelDocument.getTravelDocumentId());
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename() + "_" + travelDocument.getTravelDocumentId());
         try {
 
             FileOutputStream fos = new FileOutputStream(convFile);
@@ -115,7 +111,7 @@ public class TravelDocumentService {
     }
 
     public TravelDocumentResponse getTravelDocumentById(Long travelDocumentId, Long docId) {
-        TravelDocument travelDocument = travelDocumentRepository.findByTravelIdAndDocumentId(travelDocumentId,docId);
+        TravelDocument travelDocument = travelDocumentRepository.findByTravelIdAndDocumentId(travelDocumentId, docId);
         if (travelDocument.isDeleted())
             throw new EntityNotFoundException("Travel Document you are looking for is deleted");
         else

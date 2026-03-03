@@ -9,7 +9,6 @@ import com.example.HRMS.dtos.response.PostResponse;
 import com.example.HRMS.entities.AchievementPost;
 import com.example.HRMS.entities.Comment;
 import com.example.HRMS.entities.Employee;
-import com.example.HRMS.entities.Expense;
 import com.example.HRMS.enums.Roles;
 import com.example.HRMS.mappers.CommentMapper;
 import com.example.HRMS.mappers.PostMapper;
@@ -36,20 +35,20 @@ public class PostService {
     private final Cloudinary cloudinary;
     private final CommentRepository commentRepository;
 
-    public PostService(AchievementPostRepository achievementPostRepository,CommentRepository commentRepository, Cloudinary cloudinary, EmployeeRepository employeeRepository) {
+    public PostService(AchievementPostRepository achievementPostRepository, CommentRepository commentRepository, Cloudinary cloudinary, EmployeeRepository employeeRepository) {
         this.achievementPostRepository = achievementPostRepository;
         this.employeeRepository = employeeRepository;
         this.cloudinary = cloudinary;
         this.commentRepository = commentRepository;
     }
 
-    public PostResponse createPost(PostRequest request, MultipartFile file, String email){
+    public PostResponse createPost(PostRequest request, MultipartFile file, String email) {
         Employee author = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
         AchievementPost post = PostMapper.toEntity(request);
         post.setAuthor(author);
 
-        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename()+"_"+post.getAchievementPostId());
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename() + "_" + post.getAchievementPostId());
         try {
 
             FileOutputStream fos = new FileOutputStream(convFile);
@@ -68,7 +67,8 @@ public class PostService {
 
         return PostMapper.toDto(savedPost);
     }
-    public void createSystemPost (PostRequest request){
+
+    public void createSystemPost(PostRequest request) {
 
         AchievementPost post = PostMapper.toEntity(request);
         post.setSystemPost(true);
@@ -78,7 +78,7 @@ public class PostService {
         achievementPostRepository.save(post);
     }
 
-    public CommentResponse createComment(CommentRequest request, Long postId, String email){
+    public CommentResponse createComment(CommentRequest request, Long postId, String email) {
         Employee author = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 
@@ -156,7 +156,8 @@ public class PostService {
                 .map(CommentMapper::toDto)
                 .toList();
     }
-    public String likePost(String email, Long postId){
+
+    public String likePost(String email, Long postId) {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Employee not found with Email: " + email));
@@ -170,7 +171,7 @@ public class PostService {
         return "Like done";
     }
 
-    public PostResponse getPostById(Long postId){
+    public PostResponse getPostById(Long postId) {
         AchievementPost post = achievementPostRepository.findById(postId)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Post not found with ID: " + postId));
@@ -178,7 +179,7 @@ public class PostService {
         return PostMapper.toDto(post);
     }
 
-    public String deletePost(Long postId, String email){
+    public String deletePost(Long postId, String email) {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Employee not found with Email: " + email));
@@ -186,25 +187,24 @@ public class PostService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Post not found with ID: " + postId));
 
-        if(employee.getRole().getRoleName() == Roles.HR){
-            if(post.isDeleted()){
+        if (employee.getRole().getRoleName() == Roles.HR) {
+            if (post.isDeleted()) {
                 throw new InvalidParameterException("Post is already deleted.");
-            }else{
+            } else {
                 post.setDeleted(true);
                 achievementPostRepository.save(post);
                 return "Post deleted successfully.";
             }
-        }else{
-            if(employee.getEmployeeId().equals(post.getAuthor().getEmployeeId())){
-                if(post.isDeleted()){
+        } else {
+            if (employee.getEmployeeId().equals(post.getAuthor().getEmployeeId())) {
+                if (post.isDeleted()) {
                     throw new InvalidParameterException("Post is already deleted.");
-                }else{
+                } else {
                     post.setDeleted(true);
                     achievementPostRepository.save(post);
                     return "Post deleted successfully.";
                 }
-            }
-            else{
+            } else {
                 throw new InvalidParameterException("Not authorized to delete this post");
             }
         }

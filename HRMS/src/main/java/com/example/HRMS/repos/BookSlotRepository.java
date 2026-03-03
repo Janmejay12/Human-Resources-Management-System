@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookSlotRepository extends JpaRepository<BookSlot,Long> {
+public interface BookSlotRepository extends JpaRepository<BookSlot, Long> {
     boolean existsByGameSlotAndStatusAndIsDeletedFalse(
             GameSlot slot,
             SlotBookingStatuses status
@@ -29,13 +29,13 @@ public interface BookSlotRepository extends JpaRepository<BookSlot,Long> {
     );
 
     @Query("""
-SELECT COUNT(b) > 0
-FROM BookSlot b
-WHERE b.bookedBy.employeeId = :employeeId
-AND b.gameSlot.slotDate = :date
-AND b.status = :status
-AND b.isDeleted = false
-""")
+            SELECT COUNT(b) > 0
+            FROM BookSlot b
+            WHERE b.bookedBy.employeeId = :employeeId
+            AND b.gameSlot.slotDate = :date
+            AND b.status = :status
+            AND b.isDeleted = false
+            """)
     boolean hasPlayedToday(
             Long employeeId,
             LocalDate date,
@@ -55,14 +55,14 @@ AND b.isDeleted = false
     List<BookSlot> findByGameSlotAndIsDeletedFalse(GameSlot slot);
 
     @Query("""
-SELECT b
-FROM BookSlot b
-JOIN FETCH b.gameSlot gs
-WHERE b.bookedBy.employeeId = :employeeId
-AND gs.slotDate = :today
-AND b.isDeleted = false
-ORDER BY gs.startTime ASC
-""")
+            SELECT b
+            FROM BookSlot b
+            JOIN FETCH b.gameSlot gs
+            WHERE b.bookedBy.employeeId = :employeeId
+            AND gs.slotDate = :today
+            AND b.isDeleted = false
+            ORDER BY gs.startTime ASC
+            """)
     List<BookSlot> findTodayBookings(
             @Param("employeeId") Long employeeId,
             @Param("today") LocalDate today

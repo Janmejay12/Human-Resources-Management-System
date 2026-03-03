@@ -21,11 +21,11 @@ public class ReferalController {
         this.referalService = referalService;
     }
 
-    @PostMapping( value = "/{id}/referals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{id}/referals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createReferal(@AuthenticationPrincipal CustomEmployee user,
-                                                         @Valid @RequestPart("data") ReferalRequest request,
-                                                         @RequestPart("file") MultipartFile file,
-                                                         @PathVariable Long id){
+                                           @Valid @RequestPart("data") ReferalRequest request,
+                                           @RequestPart("file") MultipartFile file,
+                                           @PathVariable Long id) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File is empty");
         }
@@ -44,7 +44,7 @@ public class ReferalController {
             return ResponseEntity.badRequest().body("Unsupported file type");
         }
         try {
-            return ResponseEntity.ok(referalService.createReferal(request,user.getUsername(),file,id));
+            return ResponseEntity.ok(referalService.createReferal(request, user.getUsername(), file, id));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

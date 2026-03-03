@@ -25,29 +25,31 @@ public class AdminController {
 
     @PreAuthorize("hasRole('Admin')")
     @PostMapping("/register-employee")
-    public ResponseEntity<RegisterResponse> registerEmployee(@Valid @RequestBody RegisterRequest request){
-        try{
+    public ResponseEntity<RegisterResponse> registerEmployee(@Valid @RequestBody RegisterRequest request) {
+        try {
             return ResponseEntity.ok(adminService.registerEmployee(request));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new RegisterResponse("Registering Employee Failed: " + e.getMessage()));
         }
     }
 
-//    @PreAuthorize("hasAnyRole('Admin','HR')")
+    //    @PreAuthorize("hasAnyRole('Admin','HR')")
     @GetMapping("/employees")
-    public ResponseEntity<List<EmployeeResponse>> getAllEmployees(){
-        try{
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
+        try {
             return ResponseEntity.ok(adminService.getAllEmployees());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @GetMapping("/employees/my-profile")
-    public ResponseEntity<?> getEmployeeById (@AuthenticationPrincipal CustomEmployee user){
-        try{
+    public ResponseEntity<?> getEmployeeById(@AuthenticationPrincipal CustomEmployee user) {
+        try {
             return ResponseEntity.ok(adminService.getEmployeeById(user.getUsername()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }

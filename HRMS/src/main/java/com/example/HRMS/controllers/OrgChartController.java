@@ -18,11 +18,12 @@ public class OrgChartController {
     }
 
     @GetMapping("/{id}/org-charts")
-    public ResponseEntity<?> getOrgChart(@PathVariable Long id){
-        try{
+    public ResponseEntity<?> getOrgChart(@PathVariable Long id) {
+        try {
             return ResponseEntity.ok(orgChartService.getOrgChart(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }

@@ -17,9 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class BookSlotService {
@@ -34,9 +31,9 @@ public class BookSlotService {
     }
 
     @Transactional
-    public BookSlotResponse bookSlot(Long slotId, String email, List<Long> playerIds){
+    public BookSlotResponse bookSlot(Long slotId, String email, List<Long> playerIds) {
 
-        if(playerIds.size() != 2 && playerIds.size() != 4){
+        if (playerIds.size() != 2 && playerIds.size() != 4) {
             throw new IllegalArgumentException("Only 2 or 4 players allowed in a slot.");
         }
 
@@ -54,7 +51,7 @@ public class BookSlotService {
         boolean isSlotBooked = bookSlotRepository.existsByGameSlotAndStatusAndIsDeletedFalse(gameSlot, SlotBookingStatuses.BOOKED);
 
 
-        boolean hasPlayedToday = bookSlotRepository.hasPlayedToday(bookedBy.getEmployeeId(),gameSlot.getSlotDate(),SlotBookingStatuses.BOOKED);
+        boolean hasPlayedToday = bookSlotRepository.hasPlayedToday(bookedBy.getEmployeeId(), gameSlot.getSlotDate(), SlotBookingStatuses.BOOKED);
 
         BookSlot booking = new BookSlot();
 
@@ -63,20 +60,18 @@ public class BookSlotService {
         booking.setPlayers(players);
         booking.setDeleted(false);
 
-        if(isSlotBooked){
+        if (isSlotBooked) {
             booking.setStatus(SlotBookingStatuses.WAITING);
-        }
-        else{
-            if(hasPlayedToday){
+        } else {
+            if (hasPlayedToday) {
                 booking.setStatus(SlotBookingStatuses.WAITING);
-            }
-            else{
+            } else {
                 booking.setStatus((SlotBookingStatuses.BOOKED));
                 gameSlot.setStatus(SlotStatuses.BOOKED);
                 gameSlotRepository.save(gameSlot);
             }
         }
-       BookSlot savedSlot = bookSlotRepository.save(booking);
+        BookSlot savedSlot = bookSlotRepository.save(booking);
 
         BookSlotResponse response = new BookSlotResponse();
         response.setBookedById(savedSlot.getBookedBy().getEmployeeId());
@@ -98,7 +93,7 @@ public class BookSlotService {
     }
 
     @Transactional
-    public void cancelBooking(Long bookingid){
+    public void cancelBooking(Long bookingid) {
         BookSlot booking = bookSlotRepository.findByIdForUpdate(bookingid)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
@@ -108,14 +103,14 @@ public class BookSlotService {
     }
 
     @Transactional
-    public void promoteNextIfAvailable(GameSlot gameSlot){
+    public void promoteNextIfAvailable(GameSlot gameSlot) {
         boolean alreadyConfirmed = bookSlotRepository.existsByGameSlotAndStatusAndIsDeletedFalse(gameSlot, SlotBookingStatuses.BOOKED);
 
-        if(alreadyConfirmed) return;
+        if (alreadyConfirmed) return;
 
         List<BookSlot> queue = bookSlotRepository.findByGameSlotAndStatusAndIsDeletedFalseOrderByCreatedAtAsc(gameSlot, SlotBookingStatuses.WAITING);
 
-        if(queue.isEmpty()){
+        if (queue.isEmpty()) {
             gameSlot.setStatus(SlotStatuses.EMPTY);
             gameSlotRepository.save(gameSlot);
             return;
@@ -142,7 +137,7 @@ public class BookSlotService {
     }
 
 
-    private void validateNoConsecutiveBooking(GameSlot slot, Employee employee){
+    private void validateNoConsecutiveBooking(GameSlot slot, Employee employee) {
         List<GameSlot> previousSlots =
                 gameSlotRepository.findAllBySlotDateAndSlotNumber(
                         slot.getSlotDate(),

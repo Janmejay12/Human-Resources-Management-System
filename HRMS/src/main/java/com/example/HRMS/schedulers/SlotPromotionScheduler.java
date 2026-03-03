@@ -27,7 +27,7 @@ public class SlotPromotionScheduler {
 
     @Scheduled(cron = "0 10/10 * * * ?")
     @Transactional
-    public void promoteSlot(){
+    public void promoteSlot() {
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
         LocalTime cutoffTime = now.plusMinutes(22);
@@ -35,13 +35,13 @@ public class SlotPromotionScheduler {
 
         log.info("Running slot promotion scheduler at {}", now);
 
-        List<GameSlot> slots = gameSlotRepository.findSlotsForPromotion(today,now,cutoffTime);
+        List<GameSlot> slots = gameSlotRepository.findSlotsForPromotion(today, now, cutoffTime);
 
-        for(GameSlot slot : slots){
+        for (GameSlot slot : slots) {
             LocalTime threshold = slot.getStartTime().minusMinutes(20);
 
-            if(now.isAfter(threshold)
-                    && now.isBefore(slot.getStartTime())){
+            if (now.isAfter(threshold)
+                    && now.isBefore(slot.getStartTime())) {
                 bookSlotService.promoteNextIfAvailable(slot);
             }
         }

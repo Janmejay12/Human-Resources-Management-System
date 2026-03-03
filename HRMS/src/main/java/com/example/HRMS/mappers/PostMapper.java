@@ -1,12 +1,9 @@
 package com.example.HRMS.mappers;
 
-import com.example.HRMS.dtos.request.JobRequest;
 import com.example.HRMS.dtos.request.PostRequest;
 import com.example.HRMS.dtos.response.CommentResponse;
-import com.example.HRMS.dtos.response.JobResponse;
 import com.example.HRMS.dtos.response.PostResponse;
 import com.example.HRMS.entities.AchievementPost;
-import com.example.HRMS.entities.Job;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,7 +29,7 @@ public class PostMapper {
         response.setLikesCount(achievementPost.getLikesCount());
         response.setTitle(achievementPost.getTitle());
         response.setSystemPost(achievementPost.isSystemPost());
-        if(!achievementPost.isSystemPost()){
+        if (!achievementPost.isSystemPost()) {
             response.setAuthorName(achievementPost.getAuthor().getEmployeeName());
             response.setAuthorId(achievementPost.getAuthor().getEmployeeId());
         }
@@ -46,7 +43,7 @@ public class PostMapper {
                     commentResponse.setCommentedById(comment.getCommentedBy().getEmployeeId());
                     commentResponse.setCommentId(comment.getCommentId());
                     return commentResponse;
-        })
+                })
                 .toList());
         return response;
     }

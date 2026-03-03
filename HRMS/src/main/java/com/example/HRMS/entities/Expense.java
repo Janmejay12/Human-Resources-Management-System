@@ -34,7 +34,7 @@ public class Expense {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    @Column(name = "currency",nullable = false)
+    @Column(name = "currency", nullable = false)
     private String currency;
 
     private String description;
@@ -50,7 +50,7 @@ public class Expense {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    @Column(name = "expense_status",nullable = false)
+    @Column(name = "expense_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ExpenseStatus expenseStatus;
 

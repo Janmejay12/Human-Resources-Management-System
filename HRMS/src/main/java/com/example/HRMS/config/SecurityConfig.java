@@ -5,7 +5,6 @@ import com.example.HRMS.securityClasses.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -53,18 +52,19 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration); // Apply this config to all paths
         return source;
     }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurer()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                       // .requestMatchers(HttpMethod.POST, "/api/jobs/").permitAll()
-                        .requestMatchers( "/swagger-ui/**",
-                                "/swagger-ui.html","/v3/api-docs/**").permitAll()
-                       .anyRequest().authenticated()
+                        // .requestMatchers(HttpMethod.POST, "/api/jobs/").permitAll()
+                        .requestMatchers("/swagger-ui/**",
+                                "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

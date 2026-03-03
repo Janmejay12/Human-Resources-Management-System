@@ -24,6 +24,7 @@ public class ExpenseMapper {
 
         return expense;
     }
+
     public static Expense toUpdateEntity(UpdateExpenseRequest request, Expense expense) {
         if (request == null) {
             return null;

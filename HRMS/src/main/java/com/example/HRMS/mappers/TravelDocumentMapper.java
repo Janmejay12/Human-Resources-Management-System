@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TravelDocumentMapper {
-    public static TravelDocument toEntity(TravelDocumentRequest request){
+    public static TravelDocument toEntity(TravelDocumentRequest request) {
         if (request == null) {
             return null;
         }
@@ -18,7 +18,7 @@ public class TravelDocumentMapper {
         return travelDocument;
     }
 
-    public static TravelDocumentResponse toDto(TravelDocument travelDocument){
+    public static TravelDocumentResponse toDto(TravelDocument travelDocument) {
         if (travelDocument == null) {
             return null;
         }

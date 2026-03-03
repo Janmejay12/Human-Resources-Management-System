@@ -4,7 +4,6 @@ import com.example.HRMS.dtos.request.ChangeExpenseStatusRequest;
 import com.example.HRMS.dtos.request.CreateExpenseRequest;
 import com.example.HRMS.dtos.request.UpdateExpenseRequest;
 import com.example.HRMS.dtos.response.ExpenseResponse;
-import com.example.HRMS.dtos.response.TravelResponse;
 import com.example.HRMS.entities.Employee;
 import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Travel;
@@ -37,7 +36,7 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ExpenseResponse createExpense(CreateExpenseRequest request, String email, Long travelId){
+    public ExpenseResponse createExpense(CreateExpenseRequest request, String email, Long travelId) {
         Expense expense = ExpenseMapper.toEntity(request);
 
         Employee employee = employeeRepository.findByEmail(email)
@@ -47,7 +46,7 @@ public class ExpenseService {
 
         expense.setEmployee(employee);
 
-        Travel travel =  travelRepository.findById(travelId)
+        Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Travel not found with ID: " + travelId)
                 );
@@ -55,25 +54,21 @@ public class ExpenseService {
         expense.setTravel(travel);
 
         expenseRepository.save(expense);
-        ExpenseResponse response = ExpenseMapper.toDto(expense);
 
 
-        return response;
+        return ExpenseMapper.toDto(expense);
     }
 
     public List<ExpenseResponse> getAllExpensesByTravelId(Long travelId) {
         List<Expense> expenses = expenseRepository.findAllByTravelId(travelId);
-
         List<Expense> filteredExpenses = expenses.stream()
                 .filter(tr -> !tr.isDeleted())
-                .collect(Collectors.toList());
+                .toList();
 
 
-        List<ExpenseResponse> expenseResponseList = filteredExpenses.stream()
-                .map(tr -> ExpenseMapper.toDto(tr))
-                .collect(Collectors.toList());
-
-        return expenseResponseList;
+        return filteredExpenses.stream()
+                .map(ExpenseMapper::toDto)
+                .collect(Collectors.<ExpenseResponse>toList());
     }
 
     public List<ExpenseResponse> getMyExpenses(Long travelId, String email) {
@@ -87,42 +82,41 @@ public class ExpenseService {
 
         List<Expense> filteredExpenses = expenses.stream()
                 .filter(tr -> !tr.isDeleted())
-                .collect(Collectors.toList());
+                .toList();
 
-        List<ExpenseResponse> expenseResponseList = filteredExpenses.stream()
-                .map(tr -> ExpenseMapper.toDto(tr))
+        return filteredExpenses.stream()
+                .map(ExpenseMapper::toDto)
                 .collect(Collectors.toList());
-
-        return expenseResponseList;
     }
 
     public ExpenseResponse getExpenseById(Long travelId, Long expenseId) {
-        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId,expenseId).orElseThrow(() -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
+        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId, expenseId).orElseThrow(() -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
         if (expense.isDeleted())
             throw new EntityNotFoundException("Expense you are looking for is deleted");
         else
             return ExpenseMapper.toDto(expense);
     }
+
     @Transactional
-    public ExpenseResponse changeExpenseStatus(ChangeExpenseStatusRequest request, String email,Long travelId, Long expenseId){
+    public ExpenseResponse changeExpenseStatus(ChangeExpenseStatusRequest request, String email, Long travelId, Long expenseId) {
 
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 
-        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId,expenseId)
+        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId, expenseId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
 
         Employee CreatorHR = expense.getTravel().getTravelCreatedBy();
 
-        if(!CreatorHR.getEmployeeId().equals(employee.getEmployeeId())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You are not authorized to update the status");
+        if (!CreatorHR.getEmployeeId().equals(employee.getEmployeeId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to update the status");
         }
 
         ExpenseStatus current = expense.getExpenseStatus();
         ExpenseStatus next = request.getStatus();
 
-        if((current == ExpenseStatus.REJECTED) || (current == ExpenseStatus.APPROVED) && (current == ExpenseStatus.DRAFT)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Expense already finalised");
+        if ((current == ExpenseStatus.REJECTED) || (current == ExpenseStatus.APPROVED)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expense already finalised");
         }
 
         expense.setExpenseStatus(next);
@@ -132,23 +126,22 @@ public class ExpenseService {
         return getExpenseById(travelId, expense.getExpenseId());
     }
 
-    public ExpenseResponse updateExpense(UpdateExpenseRequest request,Long travelId, Long expenseId){
+    public ExpenseResponse updateExpense(UpdateExpenseRequest request, Long travelId, Long expenseId) {
 
-        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId,expenseId).orElseThrow(
+        Expense expense = expenseRepository.findByTravelAndExpenseId(travelId, expenseId).orElseThrow(
                 () -> new EntityNotFoundException("Expense not found with expense ID: " + expenseId));
 
         expense = ExpenseMapper.toUpdateEntity(request, expense);
 
         expenseRepository.save(expense);
-        ExpenseResponse response = ExpenseMapper.toDto(expense);
-        return response;
+        return ExpenseMapper.toDto(expense);
     }
 
-    public String deleteExpense(Long travelId, Long expenseId){
+    public String deleteExpense(Long travelId, Long expenseId) {
         Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense not found with ID: " + expenseId));
 
-        if(expense.isDeleted()){
+        if (expense.isDeleted()) {
             throw new IllegalArgumentException("Expense is already deleted");
         }
 

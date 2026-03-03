@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class CustomEmployee implements UserDetails {
-    private Employee employee;
+    private final Employee employee;
 
     public CustomEmployee(Employee employee) {
         this.employee = employee;
@@ -37,13 +37,16 @@ public class CustomEmployee implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;    }
+        return true;
+    }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;    }
+        return true;
+    }
 
     @Override
     public boolean isEnabled() {
-        return true;    }
+        return true;
+    }
 }

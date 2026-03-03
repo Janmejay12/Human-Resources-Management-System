@@ -1,6 +1,5 @@
 package com.example.HRMS.repos;
 
-import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.ExpenseDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

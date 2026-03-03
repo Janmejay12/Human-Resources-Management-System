@@ -32,12 +32,13 @@ public class TravelService {
     private final StatusRepository statusRepository;
     private final SmtpGmailSenderService smtpGmailSenderService;
 
-    public TravelService(TravelRepository travelRepository,SmtpGmailSenderService smtpGmailSenderService, EmployeeRepository employeeRepository, StatusRepository statusRepository) {
+    public TravelService(TravelRepository travelRepository, SmtpGmailSenderService smtpGmailSenderService, EmployeeRepository employeeRepository, StatusRepository statusRepository) {
         this.travelRepository = travelRepository;
         this.employeeRepository = employeeRepository;
         this.statusRepository = statusRepository;
         this.smtpGmailSenderService = smtpGmailSenderService;
     }
+
     @Transactional
     public TravelResponse createTravel(TravelCreateRequest request, String email) {
 
@@ -52,7 +53,7 @@ public class TravelService {
                 .orElseThrow(() -> new EntityNotFoundException("Status not found with ID: " + request.getStatusId()));
         travel.setStatus(status);
 
-      List<Employee> employees = employeeRepository.findAllById(request.getEmployeeIds());
+        List<Employee> employees = employeeRepository.findAllById(request.getEmployeeIds());
 
         employees = employees.stream()
                 .filter(e -> !e.isDeleted())
@@ -72,22 +73,23 @@ public class TravelService {
                 )
                 .collect(Collectors.toList());
 
-        if(!conflictedEmployees.isEmpty())
+        if (!conflictedEmployees.isEmpty())
             throw new EntityNotFoundException("Travel date conflict with selected employees.");
 
-       if(employees.size() != request.getEmployeeIds().size()){
-          throw new EntityNotFoundException("Invalid employees list");      }
+        if (employees.size() != request.getEmployeeIds().size()) {
+            throw new EntityNotFoundException("Invalid employees list");
+        }
 
-      travel.setEmployees(employees);
+        travel.setEmployees(employees);
 
 
-      for(Employee e : employees){
-          e.getTravels().add(travel);
-      }
+        for (Employee e : employees) {
+            e.getTravels().add(travel);
+        }
 
-      Travel savedTravel = travelRepository.saveAndFlush(travel);
+        Travel savedTravel = travelRepository.saveAndFlush(travel);
 
-        for(Employee e : savedTravel.getEmployees()) {
+        for (Employee e : savedTravel.getEmployees()) {
             smtpGmailSenderService.sendEmail(savedTravel.getTravelCreatedBy().getEmail(), e.getEmail(), String.format("Action Required: Travel Booking Confirmation for %s to %s", savedTravel.getTravelTitle(), savedTravel.getLocation()),
 
                     String.format(
@@ -109,18 +111,18 @@ public class TravelService {
             );
         }
 
-      TravelResponse travelResponse = TravelMapper.toDto(savedTravel);
+        TravelResponse travelResponse = TravelMapper.toDto(savedTravel);
 
         return travelResponse;
     }
 
     public Page<TravelResponse> getAllTravels(int page, int size) {
-        Pageable pageable = PageRequest.of(page,size, Sort.by("startDate").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("startDate").ascending());
 
         Page<Travel> travelPage = travelRepository.findByIsDeletedFalse(pageable);
 
 
-        return travelPage.map(TravelMapper :: toDto);
+        return travelPage.map(TravelMapper::toDto);
     }
 
     public TravelResponse getTravelById(Long travelId) {
@@ -132,7 +134,7 @@ public class TravelService {
     }
 
     @Transactional
-    public TravelResponse changeTravelStatus(ChangeTravelStatusRequest request, String email, Long travelId){
+    public TravelResponse changeTravelStatus(ChangeTravelStatusRequest request, String email, Long travelId) {
 
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
@@ -143,13 +145,13 @@ public class TravelService {
         boolean isCreator = travel.getTravelCreatedBy().getEmployeeId().equals(employee.getEmployeeId());
 
 
-        if(!isCreator)
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Only creator of the travel");
+        if (!isCreator)
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only creator of the travel");
 
         Statuses currentStatus = travel.getStatus().getStatusName();
 
-        if((currentStatus == Statuses.Cancelled) || currentStatus == Statuses.Completed){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Status is already finalized");
+        if ((currentStatus == Statuses.Cancelled) || currentStatus == Statuses.Completed) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status is already finalized");
         }
         Status status = statusRepository.findByStatusName(request.getStatus());
 
@@ -159,23 +161,23 @@ public class TravelService {
         return getTravelById(travel.getTravelId());
     }
 
-    public Page<TravelResponse> gettravelsForEmployee(String email, int page, int size){
+    public Page<TravelResponse> gettravelsForEmployee(String email, int page, int size) {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
-        Pageable pageable = PageRequest.of(page,size, Sort.by("startDate").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("startDate").ascending());
 
         Page<Travel> travelPage = travelRepository.findDistinctByEmployeesEmployeeIdAndIsDeletedFalse(employee.getEmployeeId(), pageable);
-        return travelPage.map(TravelMapper :: toDto);
+        return travelPage.map(TravelMapper::toDto);
     }
 
     @Transactional
-    public TravelResponse updateTravel(UpdateTravelRequest request, Long travelId){
+    public TravelResponse updateTravel(UpdateTravelRequest request, Long travelId) {
         Travel existingTravel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel not found with ID: " + travelId));
 
-        existingTravel = TravelMapper.toUpdatedEntity(request,existingTravel);
+        existingTravel = TravelMapper.toUpdatedEntity(request, existingTravel);
 
-        for(Employee e : existingTravel.getEmployees()){
+        for (Employee e : existingTravel.getEmployees()) {
             e.getTravels().clear();
         }
 
@@ -202,13 +204,14 @@ public class TravelService {
 //        if(!conflictedEmployees.isEmpty())
 //            throw new EntityNotFoundException("Travel date conflict with selected employees.");
 
-        if(employees.size() != request.getEmployeeIds().size()){
-            throw new EntityNotFoundException("Invalid employees list");      }
+        if (employees.size() != request.getEmployeeIds().size()) {
+            throw new EntityNotFoundException("Invalid employees list");
+        }
 
 
         existingTravel.setEmployees(employees);
 
-        for(Employee e : employees){
+        for (Employee e : employees) {
             e.getTravels().add(existingTravel);
         }
         Travel savedTravel = travelRepository.saveAndFlush(existingTravel);
@@ -217,16 +220,16 @@ public class TravelService {
         return travelResponse;
     }
 
-    public String deleteTravel(Long travelId){
+    public String deleteTravel(Long travelId) {
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel not found with ID: " + travelId));
 
-        if(travel.isDeleted()){
+        if (travel.isDeleted()) {
             throw new IllegalArgumentException("Travel is already deleted");
         }
 
         travel.setDeleted(true);
         travelRepository.save(travel);
-       return "Travel deleted Successfully.";
+        return "Travel deleted Successfully.";
     }
 }

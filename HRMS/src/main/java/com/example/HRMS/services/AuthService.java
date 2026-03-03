@@ -12,7 +12,7 @@ public class AuthService {
 
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
     public AuthService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, JWTService jwtService) {
         this.employeeRepository = employeeRepository;
@@ -20,17 +20,16 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public LoginResponse authenticateUser(LoginRequest request){
+    public LoginResponse authenticateUser(LoginRequest request) {
         Employee employee = employeeRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
 
-        if(passwordEncoder.matches(request.getPassword(),employee.getPassword())){
+        if (passwordEncoder.matches(request.getPassword(), employee.getPassword())) {
             String token = jwtService.generateToken(employee.getEmail(), employee.getRole().getRoleName().toString());
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setToken(token);
             return loginResponse;
-        }
-        else
+        } else
             throw new RuntimeException("Invalid Password");
     }
 

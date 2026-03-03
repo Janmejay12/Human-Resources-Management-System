@@ -3,12 +3,12 @@ package com.example.HRMS.services;
 import com.example.HRMS.dtos.request.JobRequest;
 import com.example.HRMS.dtos.request.ShareJobRequest;
 import com.example.HRMS.dtos.request.UpdateJobRequest;
-import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.dtos.response.JobResponse;
 import com.example.HRMS.dtos.response.ShareJobResponse;
-import com.example.HRMS.entities.*;
+import com.example.HRMS.entities.Department;
+import com.example.HRMS.entities.Employee;
+import com.example.HRMS.entities.Job;
 import com.example.HRMS.enums.Roles;
-import com.example.HRMS.mappers.ExpenseMapper;
 import com.example.HRMS.mappers.JobMapper;
 import com.example.HRMS.repos.DepartmentRepository;
 import com.example.HRMS.repos.EmployeeRepository;
@@ -26,7 +26,7 @@ public class JobService {
     private final DepartmentRepository departmentRepository;
     private final SmtpGmailSenderService smtpGmailSenderService;
 
-    public JobService(JobRepository jobRepository,SmtpGmailSenderService smtpGmailSenderService, EmployeeRepository employeeRepository,DepartmentRepository departmentRepository) {
+    public JobService(JobRepository jobRepository, SmtpGmailSenderService smtpGmailSenderService, EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
         this.jobRepository = jobRepository;
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
@@ -34,7 +34,7 @@ public class JobService {
 
     }
 
-    public List<JobResponse> getAllJobs(){
+    public List<JobResponse> getAllJobs() {
         List<Job> jobs = jobRepository.findAll();
 
         List<Job> filteredJobs = jobs.stream()
@@ -48,7 +48,7 @@ public class JobService {
         return jobResponseList;
     }
 
-    public JobResponse updateJob(UpdateJobRequest request, Long jobId, String email){
+    public JobResponse updateJob(UpdateJobRequest request, Long jobId, String email) {
         Job job = jobRepository.findById(jobId).orElseThrow(
                 () -> new EntityNotFoundException("Job not found with ID: " + jobId)
         );
@@ -56,32 +56,32 @@ public class JobService {
                 .orElseThrow(
                         () -> new EntityNotFoundException("Employee not found with email: " + email)
                 );
-        if(employee.getRole().getRoleName() != Roles.HR){
+        if (employee.getRole().getRoleName() != Roles.HR) {
             throw new IllegalArgumentException("You are not authorized to create jobs");
         }
 
-        if(request.getDefaultEmail() != null){
+        if (request.getDefaultEmail() != null) {
             job.setDefaultEmail(request.getDefaultEmail());
         }
 
-        if(request.getOwnerId() != null){
+        if (request.getOwnerId() != null) {
             Employee jobOwner = employeeRepository.findById(request.getOwnerId()).orElseThrow(
                     () -> new EntityNotFoundException("Employee not found with ID: " + request.getOwnerId()));
             job.setHROwner(jobOwner);
             job.setDefaultEmail(jobOwner.getEmail());
         }
 
-        if(request.getReviewerIds() != null){
+        if (request.getReviewerIds() != null) {
             List<Long> reviewerIds = request.getReviewerIds();
 
             List<Employee> reviewers = reviewerIds.stream()
                     .map(id -> employeeRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + id))
+                            .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + id))
                     ).toList();
 
             job.setCVReviewers(reviewers);
 
-            for(Employee e : reviewers){
+            for (Employee e : reviewers) {
                 e.getReviewedJobTitles().add(job);
             }
         }
@@ -91,13 +91,13 @@ public class JobService {
     }
 
 
-    public JobResponse createJob(JobRequest request,String email){
+    public JobResponse createJob(JobRequest request, String email) {
         Job job = JobMapper.toEntity(request);
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Employee not found with email: " + email)
                 );
-        if(employee.getRole().getRoleName() != Roles.HR){
+        if (employee.getRole().getRoleName() != Roles.HR) {
             throw new IllegalArgumentException("You are not authorized to create jobs");
         }
         job.setCreatedBy(employee);
@@ -106,10 +106,10 @@ public class JobService {
 
         Department department = departmentRepository.findById(request.getDepartmentId())
                 .orElseThrow(() -> new EntityNotFoundException("department not found with ID: " + request.getDepartmentId())
-        );
+                );
         job.setDepartment(department);
 
-        if(!request.getReviewerIds().isEmpty()){
+        if (!request.getReviewerIds().isEmpty()) {
             List<Long> reviewerIds = request.getReviewerIds();
 
             List<Employee> reviewers = reviewerIds.stream()
@@ -118,7 +118,7 @@ public class JobService {
                     ).toList();
 
             job.setCVReviewers(reviewers);
-            for(Employee e : reviewers){
+            for (Employee e : reviewers) {
                 e.getReviewedJobTitles().add(job);
             }
         }
@@ -127,7 +127,7 @@ public class JobService {
         return JobMapper.toDto(savedJob);
     }
 
-    public ShareJobResponse shareJob(ShareJobRequest request, Long jobId, String email){
+    public ShareJobResponse shareJob(ShareJobRequest request, Long jobId, String email) {
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Employee not found with email: " + email)
@@ -136,12 +136,11 @@ public class JobService {
                 () -> new EntityNotFoundException("Job not found with ID: " + jobId)
         );
 
-        for(String e : request.getRecipientEmails())
-        {
+        for (String e : request.getRecipientEmails()) {
 
             smtpGmailSenderService.sendEmail(
                     employee.getEmail()
-                    ,e,
+                    , e,
                     String.format("Career Opportunity: %s at Roima Intelligence",
                             job.getTitle()),
                     String.format(
@@ -154,9 +153,9 @@ public class JobService {
                                     "Best regards,\n" +
                                     "%s\n" +
                                     "Jr. Software Developer",
-                             job.getTitle(), job.getLocation(), employee.getEmployeeName())
-                    ,job.getJobDescriptionStorageUrl()
-                    ,job.getTitle()+ " JD");
+                            job.getTitle(), job.getLocation(), employee.getEmployeeName())
+                    , job.getJobDescriptionStorageUrl()
+                    , job.getTitle() + " JD");
 
         }
         ShareJobResponse shareJobResponse = new ShareJobResponse();

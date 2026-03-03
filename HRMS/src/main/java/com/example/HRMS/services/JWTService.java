@@ -4,14 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -23,7 +19,7 @@ public class JWTService {
     @Value("${jwt.expirationTime}")
     private long expirationTime;
 
-    public String generateToken(String email,String role) {
+    public String generateToken(String email, String role) {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
@@ -42,6 +38,7 @@ public class JWTService {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
@@ -58,7 +55,6 @@ public class JWTService {
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
-
 
 
 }

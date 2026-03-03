@@ -1,8 +1,5 @@
 package com.example.HRMS.dtos.response;
 
-import com.example.HRMS.entities.Department;
-import com.example.HRMS.entities.Employee;
-import com.example.HRMS.entities.Status;
 import com.example.HRMS.enums.EmployementType;
 import com.example.HRMS.enums.JobStatuses;
 import com.example.HRMS.enums.Skills;

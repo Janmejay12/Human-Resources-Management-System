@@ -70,7 +70,7 @@ public class Job {
 
     private LocalDateTime postedDate;
 
-    @Column(name = "job_status",nullable = false)
+    @Column(name = "job_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private JobStatuses status;
 

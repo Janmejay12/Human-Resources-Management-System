@@ -12,7 +12,7 @@ public class SmtpGmailSenderService {
     @Autowired
     private JavaMailSender emailSender;
 
-    public void sendEmail(String fromEmail,String toEmail, String subject, String bodyText, String linkUrl, String linkText){
+    public void sendEmail(String fromEmail, String toEmail, String subject, String bodyText, String linkUrl, String linkText) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -35,7 +35,7 @@ public class SmtpGmailSenderService {
 
     }
 
-    public void sendEmail(String fromEmail, String toEmail, String subject, String body){
+    public void sendEmail(String fromEmail, String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);

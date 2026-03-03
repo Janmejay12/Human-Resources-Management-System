@@ -11,38 +11,40 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee,Long> {
-     Optional<Employee> findByEmail(String email);
-     boolean existsByEmail(String email);
-     boolean existsByUserName(String username);
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    Optional<Employee> findByEmail(String email);
 
-     @Query("SELECT e FROM Employee e WHERE e.manager.id = :managerId")
-     List<Employee> findByManagerId(@Param("managerId") Long managerId);
+    boolean existsByEmail(String email);
 
-     @Query(value =
-             ";WITH ManagementChain AS (" +
-                     "    SELECT * FROM employee WHERE employee_id = :empId " +
-                     "    UNION ALL " +
-                     "    SELECT e.* FROM employee e " +
-                     "    INNER JOIN ManagementChain mc ON e.employee_id = mc.manager_id " +
-                     ") " +
-                     "SELECT * FROM ManagementChain",
-             nativeQuery = true)
-     List<Employee> findManagementChain(@Param("empId") Long empId);
+    boolean existsByUserName(String username);
 
-     @Query("""
-    SELECT e
-    FROM Employee e
-    WHERE MONTH(e.birthDate) = MONTH(:today)
-      AND DAY(e.birthDate) = DAY(:today)
-""")
-     List<Employee> findEmployeesWithBirthdayToday(@Param("today") LocalDate today);
+    @Query("SELECT e FROM Employee e WHERE e.manager.id = :managerId")
+    List<Employee> findByManagerId(@Param("managerId") Long managerId);
 
-     @Query("""
-    SELECT e
-    FROM Employee e
-    WHERE MONTH(e.joiningDate) = MONTH(:today)
-      AND DAY(e.joiningDate) = DAY(:today)
-""")
-     List<Employee> findEmployeesWithJoiningDateToday(@Param("today") LocalDate today);
+    @Query(value =
+            ";WITH ManagementChain AS (" +
+                    "    SELECT * FROM employee WHERE employee_id = :empId " +
+                    "    UNION ALL " +
+                    "    SELECT e.* FROM employee e " +
+                    "    INNER JOIN ManagementChain mc ON e.employee_id = mc.manager_id " +
+                    ") " +
+                    "SELECT * FROM ManagementChain",
+            nativeQuery = true)
+    List<Employee> findManagementChain(@Param("empId") Long empId);
+
+    @Query("""
+                SELECT e
+                FROM Employee e
+                WHERE MONTH(e.birthDate) = MONTH(:today)
+                  AND DAY(e.birthDate) = DAY(:today)
+            """)
+    List<Employee> findEmployeesWithBirthdayToday(@Param("today") LocalDate today);
+
+    @Query("""
+                SELECT e
+                FROM Employee e
+                WHERE MONTH(e.joiningDate) = MONTH(:today)
+                  AND DAY(e.joiningDate) = DAY(:today)
+            """)
+    List<Employee> findEmployeesWithJoiningDateToday(@Param("today") LocalDate today);
 }

@@ -3,8 +3,6 @@ package com.example.HRMS.controllers;
 import com.example.HRMS.dtos.request.LoginRequest;
 import com.example.HRMS.dtos.response.LoginResponse;
 import com.example.HRMS.services.AuthService;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +20,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request){
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request) {
 
-        try{
+        try {
             LoginResponse loginResponse = authService.authenticateUser(request);
 //            ResponseCookie cookie =
 //                    ResponseCookie

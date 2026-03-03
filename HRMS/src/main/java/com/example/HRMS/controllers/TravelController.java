@@ -8,7 +8,6 @@ import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.TravelService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,30 +25,30 @@ public class TravelController {
 
     @PreAuthorize("hasRole('HR')")
     @PostMapping()
-    public ResponseEntity<?> createTravel(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody TravelCreateRequest request){
-        try{
-            TravelResponse travelResponse = travelService.createTravel(request,user.getUsername());
+    public ResponseEntity<?> createTravel(@AuthenticationPrincipal CustomEmployee user, @Valid @RequestBody TravelCreateRequest request) {
+        try {
+            TravelResponse travelResponse = travelService.createTravel(request, user.getUsername());
             return ResponseEntity.ok(travelResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-        @PreAuthorize("hasRole('HR')")
-        @GetMapping()
+    @PreAuthorize("hasRole('HR')")
+    @GetMapping()
     public ResponseEntity<?> getAllTravels(@RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size){
-            try{
-                return ResponseEntity.ok(travelService.getAllTravels(page, size));
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-            }
+                                           @RequestParam(defaultValue = "10") int size) {
+        try {
+            return ResponseEntity.ok(travelService.getAllTravels(page, size));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
 
     @PreAuthorize("hasRole('HR')")
     @GetMapping("/{id}")
-    public ResponseEntity<TravelResponse> getTravelById(@PathVariable long id){
-        try{
+    public ResponseEntity<TravelResponse> getTravelById(@PathVariable long id) {
+        try {
             return ResponseEntity.ok(travelService.getTravelById(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -58,10 +57,9 @@ public class TravelController {
 
     @PutMapping("/{id}/status")
     public ResponseEntity<?> changeTravelStatus(@AuthenticationPrincipal CustomEmployee user
-                                ,@RequestBody ChangeTravelStatusRequest request
-                                 ,@PathVariable Long id)
-    {
-        try{
+            , @RequestBody ChangeTravelStatusRequest request
+            , @PathVariable Long id) {
+        try {
             return ResponseEntity.ok(travelService.changeTravelStatus(request, user.getUsername(), id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -69,19 +67,19 @@ public class TravelController {
     }
 
     @GetMapping("/my-travels")
-    public ResponseEntity<?> getMyTravels(@AuthenticationPrincipal CustomEmployee user,@RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size){
-        try{
-            return ResponseEntity.ok(travelService.gettravelsForEmployee(user.getUsername(),page,size));
+    public ResponseEntity<?> getMyTravels(@AuthenticationPrincipal CustomEmployee user, @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+        try {
+            return ResponseEntity.ok(travelService.gettravelsForEmployee(user.getUsername(), page, size));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PutMapping("/{travelId}")
-    public ResponseEntity<?> updateTravel(@Valid @RequestBody UpdateTravelRequest request, @PathVariable Long travelId){
-        try{
-            TravelResponse travelResponse = travelService.updateTravel(request,travelId);
+    public ResponseEntity<?> updateTravel(@Valid @RequestBody UpdateTravelRequest request, @PathVariable Long travelId) {
+        try {
+            TravelResponse travelResponse = travelService.updateTravel(request, travelId);
             return ResponseEntity.ok(travelResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -90,8 +88,8 @@ public class TravelController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTravel(@PathVariable Long id){
-        try{
+    public ResponseEntity<?> deleteTravel(@PathVariable Long id) {
+        try {
             return ResponseEntity.ok(travelService.deleteTravel(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

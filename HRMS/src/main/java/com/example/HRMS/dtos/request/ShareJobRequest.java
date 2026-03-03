@@ -16,5 +16,5 @@ import java.util.List;
 @NoArgsConstructor
 public class ShareJobRequest {
     @NotNull(message = "Recipient Emails can not be empty")
-    private List<@Email String > recipientEmails = new ArrayList<>();
+    private List<@Email String> recipientEmails = new ArrayList<>();
 }

@@ -1,7 +1,6 @@
 package com.example.HRMS.entities;
 
 import com.example.HRMS.enums.SlotBookingStatuses;
-import com.example.HRMS.enums.SlotStatuses;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +34,7 @@ public class BookSlot {
     private boolean isDeleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "booked_by_id",nullable = false)
+    @JoinColumn(name = "booked_by_id", nullable = false)
     private Employee bookedBy;
 
     @Column(name = "status")

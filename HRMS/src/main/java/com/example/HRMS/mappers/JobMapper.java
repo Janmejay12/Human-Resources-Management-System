@@ -1,13 +1,8 @@
 package com.example.HRMS.mappers;
 
-import com.example.HRMS.dtos.request.CreateExpenseRequest;
 import com.example.HRMS.dtos.request.JobRequest;
-import com.example.HRMS.dtos.request.ReferalRequest;
-import com.example.HRMS.dtos.response.ExpenseResponse;
 import com.example.HRMS.dtos.response.JobResponse;
-import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.Job;
-import com.example.HRMS.entities.Referal;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,7 +25,7 @@ public class JobMapper {
         return job;
     }
 
-    public static JobResponse toDto(Job job){
+    public static JobResponse toDto(Job job) {
         if (job == null) {
             return null;
         }

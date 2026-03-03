@@ -1,11 +1,8 @@
 package com.example.HRMS.mappers;
 
 import com.example.HRMS.dtos.request.ReferalRequest;
-import com.example.HRMS.dtos.request.TravelDocumentRequest;
 import com.example.HRMS.dtos.response.ReferalResponse;
-import com.example.HRMS.dtos.response.TravelDocumentResponse;
 import com.example.HRMS.entities.Referal;
-import com.example.HRMS.entities.TravelDocument;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +15,7 @@ public class ReferalMapper {
         referal.setCandidateEmail(request.getCandidateEmail());
         referal.setCandidateName(request.getCandidateName());
         referal.setShortNote(request.getShortNote());
-        return  referal;
+        return referal;
     }
 
     public static ReferalResponse toDto(Referal referal) {

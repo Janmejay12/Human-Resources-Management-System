@@ -1,6 +1,5 @@
 package com.example.HRMS.repos;
 
-import com.example.HRMS.entities.Expense;
 import com.example.HRMS.entities.GameSlot;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GameSlotRepository extends JpaRepository<GameSlot,Long> {
+public interface GameSlotRepository extends JpaRepository<GameSlot, Long> {
 
     @Query("DELETE FROM GameSlot gs WHERE gs.game.gameId = :gameId")
     void deleteGameSlotsByGameId(@Param("gameId") Long gameId);
@@ -33,11 +32,11 @@ public interface GameSlotRepository extends JpaRepository<GameSlot,Long> {
     );
 
     @Query("""
-SELECT gs
-FROM GameSlot gs
-WHERE gs.slotDate = :today
-AND gs.startTime BETWEEN CAST(:now AS time) AND CAST(:cutoffTime AS time)
-""")
+            SELECT gs
+            FROM GameSlot gs
+            WHERE gs.slotDate = :today
+            AND gs.startTime BETWEEN CAST(:now AS time) AND CAST(:cutoffTime AS time)
+            """)
     List<GameSlot> findSlotsForPromotion(
             @Param("today") LocalDate today,
             @Param("now") LocalTime now,

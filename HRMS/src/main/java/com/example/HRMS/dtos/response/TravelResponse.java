@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -18,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TravelResponse {
     private Long travelId;
-    private String  travelTitle;
+    private String travelTitle;
     private String location;
     private String purpose;
     private BigDecimal maxPerDayAllowance;
