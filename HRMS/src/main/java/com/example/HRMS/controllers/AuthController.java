@@ -1,8 +1,11 @@
 package com.example.HRMS.controllers;
 
+import com.example.HRMS.dtos.request.ForgotPasswordRequest;
 import com.example.HRMS.dtos.request.LoginRequest;
+import com.example.HRMS.dtos.request.PasswordResetRequest;
 import com.example.HRMS.dtos.response.LoginResponse;
 import com.example.HRMS.services.AuthService;
+import com.example.HRMS.services.PasswordResetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, PasswordResetService passwordResetService) {
         this.authService = authService;
+        this.passwordResetService = passwordResetService;
     }
 
     @PostMapping("/login")
@@ -39,6 +44,28 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new LoginResponse("Login Failed: " + e.getMessage()));
         }
+    }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(
+            @RequestBody ForgotPasswordRequest request) {
+
+        passwordResetService.forgotPassword(request.getEmail());
+
+        return ResponseEntity.ok(
+                "If the email exists, a reset link was sent."
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(
+            @RequestBody PasswordResetRequest request) {
+
+        passwordResetService.resetPassword(
+                request.getToken(),
+                request.getPassword()
+        );
+
+        return ResponseEntity.ok("Password reset successful");
     }
 }
 

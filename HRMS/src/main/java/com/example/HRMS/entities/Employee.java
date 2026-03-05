@@ -64,6 +64,9 @@ public class Employee {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private List<PasswordResetToken> passwordResetTokens = new ArrayList<>();
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "employee_travel",
@@ -104,6 +107,4 @@ public class Employee {
 
     @Column(name = "game_of_interest")
     private GameOfInterestTypes gameOfInterest;
-
-
 }

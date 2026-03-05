@@ -1,10 +1,13 @@
 package com.example.HRMS.controllers;
 
+import com.example.HRMS.dtos.request.ForgotPasswordRequest;
+import com.example.HRMS.dtos.request.PasswordResetRequest;
 import com.example.HRMS.dtos.request.RegisterRequest;
 import com.example.HRMS.dtos.response.EmployeeResponse;
 import com.example.HRMS.dtos.response.RegisterResponse;
 import com.example.HRMS.securityClasses.CustomEmployee;
 import com.example.HRMS.services.AdminService;
+import com.example.HRMS.services.PasswordResetService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
