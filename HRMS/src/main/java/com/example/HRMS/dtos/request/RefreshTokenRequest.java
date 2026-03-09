@@ -1,6 +1,6 @@
 package com.example.HRMS.dtos.request;
 
-import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ForgotPasswordRequest {
-    @Email
-    private String email;
+public class RefreshTokenRequest {
+    @NotNull
+    private String refreshToken;
 }
