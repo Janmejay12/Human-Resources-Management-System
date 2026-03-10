@@ -42,6 +42,12 @@ public class JWTfilter extends OncePerRequestFilter {
 
         String jwt = authHeader.substring(7);
 
+        if (jwt == null || jwt.isBlank() || !jwt.contains(".")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
 //        if( request.getCookies() != null){
 //            for(Cookie c : request.getCookies()){
 //                if("token".equals(c.getName())){

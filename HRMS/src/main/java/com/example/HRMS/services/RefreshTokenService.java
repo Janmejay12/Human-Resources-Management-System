@@ -101,6 +101,7 @@ public class RefreshTokenService {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/api/refresh");
+        cookie.setPath("/api/auth/logout");
         cookie.setMaxAge(7 * 24 * 60 * 60);
 
         response.addCookie(cookie);
@@ -124,6 +125,7 @@ public class RefreshTokenService {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/api/refresh");
+        cookie.setPath("/api/auth/logout");
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);
