@@ -1,15 +1,12 @@
 package com.example.HRMS.controllers;
 
-import com.example.HRMS.dtos.request.RefreshTokenRequest;
 import com.example.HRMS.dtos.response.LoginResponse;
-import com.example.HRMS.entities.RefreshToken;
-import com.example.HRMS.repos.RefreshTokenRepository;
-import com.example.HRMS.services.JWTService;
 import com.example.HRMS.services.RefreshTokenService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,27 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class RefreshController {
 
     private final RefreshTokenService refreshTokenService;
-    private final JWTService jwtService;
 
-    public RefreshController(RefreshTokenService refreshTokenService, JWTService jwtService, RefreshTokenRepository refreshTokenRepository) {
+    public RefreshController(RefreshTokenService refreshTokenService) {
         this.refreshTokenService = refreshTokenService;
-        this.jwtService = jwtService;
+
     }
 
     @PostMapping
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request){
+    public ResponseEntity<?> refreshToken(HttpServletRequest request,
+                                          HttpServletResponse response){
         try {
-           RefreshToken oldToken = refreshTokenService. verifyToken(request.getRefreshToken());
-            RefreshToken newToken =
-                    refreshTokenService.rotateRefreshToken(oldToken);
-
-            String accessToken = jwtService.generateToken(
-                    oldToken.getUser().getEmail(),
-                    oldToken.getUser().getRole().getRoleName().toString()
-            );
+           LoginResponse loginResponse = refreshTokenService. refreshToken(request,response);
 
             return ResponseEntity.ok(
-                    new LoginResponse(accessToken, newToken.getToken())
+                    loginResponse
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

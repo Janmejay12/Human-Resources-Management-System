@@ -3,17 +3,13 @@ package com.example.HRMS.controllers;
 import com.example.HRMS.dtos.request.ForgotPasswordRequest;
 import com.example.HRMS.dtos.request.LoginRequest;
 import com.example.HRMS.dtos.request.PasswordResetRequest;
-import com.example.HRMS.dtos.request.RefreshTokenRequest;
 import com.example.HRMS.dtos.response.LoginResponse;
-import com.example.HRMS.entities.RefreshToken;
-import com.example.HRMS.repos.RefreshTokenRepository;
 import com.example.HRMS.services.AuthService;
 import com.example.HRMS.services.PasswordResetService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -21,20 +17,19 @@ public class AuthController {
 
     private final AuthService authService;
     private final PasswordResetService passwordResetService;
-    private final RefreshTokenRepository refreshTokenRepository;
 
-    public AuthController(AuthService authService, PasswordResetService passwordResetService, RefreshTokenRepository refreshTokenRepository) {
+    public AuthController(AuthService authService, PasswordResetService passwordResetService) {
         this.authService = authService;
         this.passwordResetService = passwordResetService;
-        this.refreshTokenRepository = refreshTokenRepository;
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request, HttpServletResponse response) {
 
         try {
-            LoginResponse loginResponse = authService.authenticateUser(request);
+            LoginResponse loginResponse = authService.authenticateUser(request,response);
+
 //            ResponseCookie cookie =
 //                    ResponseCookie
 //                            .from("token",loginResponse.getToken())
@@ -48,7 +43,7 @@ public class AuthController {
             return ResponseEntity.ok(loginResponse);
 
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(new LoginResponse("Login Failed: " + e.getMessage(),""));
+            return ResponseEntity.status(401).body(new LoginResponse("Login Failed: " + e.getMessage()));
         }
     }
     @PostMapping("/forgot-password")
@@ -74,18 +69,12 @@ public class AuthController {
         return ResponseEntity.ok("Password reset successful");
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> logout( HttpServletRequest request,
+                                     HttpServletResponse response) {
 
-        RefreshToken token =
-                refreshTokenRepository.findByToken(request.getRefreshToken())
-                        .orElseThrow();
-
-        token.setRevoked(true);
-
-        refreshTokenRepository.save(token);
-
-        return ResponseEntity.ok("Logged out");
+       authService.logout(request,response);
+        return ResponseEntity.ok("Logged out successfully");
     }
 }
 
